@@ -1,0 +1,128 @@
+:host {
+  display: block;
+  height: 100vh;
+}
+
+.sidebar {
+  width: 245px;
+  height: 100%;
+  background: #ffffff;
+  border-right: 1px solid #e9eef5;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 22px 16px;
+  box-sizing: border-box;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* logo */
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 34px;
+  padding: 4px 6px;
+}
+
+.logo-mark {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #123a63, #1f6fb2);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 16px;
+  box-shadow: 0 8px 18px rgba(31, 111, 178, 0.18);
+}
+
+.logo-text {
+  font-size: 18px;
+  font-weight: 700;
+  color: #14263c;
+  letter-spacing: 0.2px;
+}
+
+/* nav */
+.nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.nav-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  padding: 12px 14px;
+  border-radius: 12px;
+  color: #5b6b7a;
+  transition: background 0.2s ease, color 0.2s ease, transform 0.2s ease;
+}
+
+.nav-item:hover {
+  background: #f5f8fc;
+  color: #123a63;
+  transform: translateX(2px);
+}
+
+.nav-item.active {
+  background: linear-gradient(90deg, rgba(31, 111, 178, 0.12), rgba(31, 111, 178, 0.04));
+  color: #123a63;
+  font-weight: 600;
+}
+
+.nav-item.active::before {
+  content: '';
+  position: absolute;
+  left: -16px;
+  top: 9px;
+  bottom: 9px;
+  width: 4px;
+  border-radius: 6px;
+  background: #1f6fb2;
+}
+
+.nav-label {
+  font-size: 14px;
+  letter-spacing: 0.2px;
+}
+
+/* logout */
+.logout-btn {
+  border: 1px solid #e7edf4;
+  background: #ffffff;
+  color: #c0392b;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.logout-btn:hover {
+  background: #fff5f5;
+  border-color: #f0c9c9;
+  transform: translateY(-1px);
+}
+
+/* responsive */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 210px;
+    padding: 18px 12px;
+  }
+
+  .logo-text {
+    font-size: 16px;
+  }
+
+  .nav-item {
+    padding: 10px 12px;
+  }
+}

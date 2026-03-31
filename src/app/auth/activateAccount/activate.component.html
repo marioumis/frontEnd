@@ -1,0 +1,66 @@
+<div class="shell">
+
+  <div class="left">
+    <canvas id="cv3"></canvas>
+    <div class="left-content">
+      <div class="brand">Au<em>rum</em></div>
+      <div class="left-center">
+        <div class="left-line"></div>
+        <div class="left-title">One step<br>closer to <em>your workspace.</em></div>
+        <div class="left-sub">We just need to verify your email address to get you started.</div>
+      </div>
+      <div class="left-bottom">
+        <div class="stat"><div class="stat-val">14k+</div><div class="stat-label">Teams</div></div>
+        <div class="stat"><div class="stat-val">99.9%</div><div class="stat-label">Uptime</div></div>
+        <div class="stat"><div class="stat-val">SOC2</div><div class="stat-label">Certified</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="right">
+
+    <!-- LOADING STATE -->
+    <div class="state-box" *ngIf="status === 'loading'">
+      <div class="spinner"></div>
+      <div class="state-title">Activating your account...</div>
+      <div class="state-sub">Please wait a moment</div>
+    </div>
+
+    <!-- SUCCESS STATE -->
+    <div class="state-box" *ngIf="status === 'success'">
+      <div class="icon-circle success-circle">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+          <path d="M5 13l4 4L19 7" stroke="#2d7a4f" stroke-width="2" 
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="state-title">Account activated!</div>
+      <div class="state-sub">{{ message }}</div>
+      <div class="state-sub" style="margin-top: 4px;">
+        You can now sign in to your workspace.
+      </div>
+      <button class="btn" (click)="goToLogin()">
+        Go to sign in →
+      </button>
+    </div>
+
+    <!-- ERROR STATE -->
+    <div class="state-box" *ngIf="status === 'error'">
+      <div class="icon-circle error-circle">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+          <path d="M18 6L6 18M6 6l12 12" stroke="#c0392b" stroke-width="2" 
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div class="state-title">Activation failed</div>
+      <div class="state-sub">{{ message }}</div>
+      <div class="state-sub" style="margin-top: 4px;">
+        Please try registering again or contact support.
+      </div>
+      <button class="btn btn-error" routerLink="/register">
+        Back to register →
+      </button>
+    </div>
+
+  </div>
+</div>

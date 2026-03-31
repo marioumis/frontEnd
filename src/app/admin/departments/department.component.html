@@ -1,0 +1,91 @@
+<div class="department-container">
+  <h2>Department Management</h2>
+
+  <form [formGroup]="departmentForm" (ngSubmit)="onSubmit()" class="department-form">
+    
+    <div class="form-group">
+      <label for="nomDep">Department Name</label>
+      <input
+        id="nomDep"
+        type="text"
+        formControlName="nomDep"
+        placeholder="Enter department name"
+      />
+
+      <small class="error" *ngIf="nomDep?.touched && nomDep?.errors?.['required']">
+        Department name is required.
+      </small>
+
+      <small class="error" *ngIf="nomDep?.touched && nomDep?.errors?.['maxlength']">
+        Department name must not exceed 50 characters.
+      </small>
+    </div>
+
+    <div class="form-group">
+      <label for="description">Description</label>
+      <textarea
+        id="description"
+        rows="4"
+        formControlName="description"
+        placeholder="Enter department description"
+      ></textarea>
+
+      <small class="error" *ngIf="description?.touched && description?.errors?.['maxlength']">
+        Description must not exceed 255 characters.
+      </small>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit">
+        {{ isEditMode ? 'Update Department' : 'Add Department' }}
+      </button>
+
+      <button type="button" *ngIf="isEditMode" (click)="resetForm()">
+        Cancel
+      </button>
+    </div>
+  </form>
+
+  <div *ngIf="successMessage" class="success-message">
+    {{ successMessage }}
+  </div>
+
+  <div *ngIf="errorMessage" class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  <hr />
+
+  <h3>Departments List</h3>
+
+  <div *ngIf="loading">
+    Loading departments...
+  </div>
+
+  <table *ngIf="!loading && departments.length > 0" class="department-table">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th style="width: 180px;">Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let department of departments">
+        <td>{{ department.idDep }}</td>
+        <td>{{ department.nomDep }}</td>
+        <td>{{ department.description }}</td>
+        <td>
+          <button type="button" (click)="onEdit(department)">Edit</button>
+          <button type="button" (click)="onDelete(department.idDep)">Delete</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p *ngIf="!loading && departments.length === 0">
+    No departments found.
+  </p>
+</div>

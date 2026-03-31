@@ -1,0 +1,50 @@
+<div class="edit-wrapper">
+  <div class="edit-card">
+    <div class="header-section">
+      <span class="subtitle">MANAGEMENT</span>
+      <h1>Edit <span>User Profile</span></h1>
+    </div>
+
+    <form class="edit-form" (ngSubmit)="onSave()">
+      <div class="form-grid">
+        <div class="form-group">
+          <label>First Name</label>
+          <input type="text" name="firstName" [(ngModel)]="userRequest.firstName" placeholder="Enter first name">
+        </div>
+
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" name="lastName" [(ngModel)]="userRequest.lastName" placeholder="Enter last name">
+        </div>
+
+        <div class="form-group full-width">
+          <label>Email Address</label>
+          <input type="email" name="email" [(ngModel)]="userRequest.email" placeholder="email@example.com">
+        </div>
+
+        <div class="form-group full-width">
+          <label>Username (Login)</label>
+          <input type="text" name="login" [(ngModel)]="userRequest.login" placeholder="username">
+        </div>
+      </div>
+      <div class="form-group full-width">
+  <label>Department</label>
+  <select name="departmentId" [(ngModel)]="userRequest.departmentId" class="custom-select">
+    <option [ngValue]="null">-- Select Department --</option>
+    <option *ngFor="let d of departments" [ngValue]="d.idDep">
+      {{ d.nomDep }}
+    </option>
+  </select>
+</div>
+
+      <div class="actions">
+        <button type="button" class="btn-cancel" [routerLink]="['/admin/users']">
+          Cancel
+        </button>
+        <button type="submit" class="btn-save" [disabled]="loading">
+          {{ loading ? 'Saving...' : 'Save Changes' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

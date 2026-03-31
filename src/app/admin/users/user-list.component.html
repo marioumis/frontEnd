@@ -1,0 +1,148 @@
+<div class="page">
+
+  <div class="topbar">
+    <div>
+      <div class="page-eyebrow">Management</div>
+      <div class="page-title">User <em>directory</em></div>
+    </div>
+
+    <div class="search-wrap">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <circle cx="7" cy="7" r="4.75" stroke="currentColor" stroke-width="1.4"></circle>
+        <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"></path>
+      </svg>
+
+      <input
+        [(ngModel)]="searchTerm"
+        (input)="onSearch()"
+        type="text"
+        placeholder="Search users"
+      />
+    </div>
+  </div>
+
+  <div class="table-wrap">
+
+    @if (loading) {
+      <div class="loading">
+        <div class="spinner"></div>
+        <span>Loading users...</span>
+      </div>
+    }
+
+    @if (!loading) {
+      <table class="table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Department</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th class="th-actions">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (user of users; track user.id) {
+            <tr>
+
+              <!-- USER -->
+              <td>
+                <div class="user-cell">
+                  <div class="avatar">
+                    {{ user.firstName.charAt(0) }}{{ user.lastName.charAt(0) }}
+                  </div>
+
+                  <div class="user-name">
+                    {{ user.firstName }} {{ user.lastName }}
+                  </div>
+                </div>
+              </td>
+
+              <!-- USERNAME -->
+              <td class="text-muted">
+                {{ user.login || '—' }}
+              </td>
+
+              <!-- EMAIL -->
+              <td class="text-muted">
+                {{ user.email }}
+              </td>
+
+              <!-- DEPARTMENT -->
+              <td>
+                {{ user.departmentName ?? '—' }}
+              </td>
+
+              <!-- ROLE -->
+              <td>
+                <span
+                  class="badge"
+                  [class.badge-admin]="user.roles[0] === 'ADMIN'"
+                  [class.badge-user]="user.roles[0] !== 'ADMIN'">
+                  {{ user.roles[0] }}
+                </span>
+              </td>
+
+              <!-- STATUS -->
+              <td>
+                <span
+                  class="badge"
+                  [class.badge-active]="user.activated"
+                  [class.badge-inactive]="!user.activated">
+                  {{ user.activated ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+
+              <!-- ACTIONS -->
+              <td>
+                <div class="actions">
+
+                  <button
+                    class="act-btn act-edit"
+                    type="button"
+                    title="Edit"
+                    [routerLink]="['/admin/users/edit', user.id]">
+                    <svg viewBox="0 0 16 16" fill="none">
+                      <path d="M11 2l3 3-8 8H3v-3l8-8z"
+                        stroke="currentColor"
+                        stroke-width="1.2"
+                        stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+
+                  <button
+                    class="act-btn act-del"
+                    type="button"
+                    title="Delete"
+                    (click)="deleteUser(user.id)">
+                    <svg viewBox="0 0 16 16" fill="none">
+                      <path d="M3 4h10M6 4V2h4v2M5 4l1 9h4l1-9"
+                        stroke="currentColor"
+                        stroke-width="1.2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round"/>
+                    </svg>
+                  </button>
+
+                </div>
+              </td>
+
+            </tr>
+          }
+
+          @empty {
+            <tr>
+              <td colspan="7" class="empty">No users found</td>
+            </tr>
+          }
+
+        </tbody>
+      </table>
+    }
+
+  </div>
+
+</div>
