@@ -1,0 +1,129 @@
+<div class="page">
+
+  <div class="topbar">
+    <div>
+      <div class="page-eyebrow">Management</div>
+      <div class="page-title">Document <em>categories</em></div>
+      <div class="page-sub">
+        Create, update, and organize your document types.
+      </div>
+    </div>
+  </div>
+
+  <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()" class="form">
+
+    <div class="field">
+      <label>Category name</label>
+      <input
+        type="text"
+        formControlName="nameType"
+        placeholder="Enter category name"
+      />
+
+      <div class="error" *ngIf="nameType?.touched && nameType?.invalid">
+        Name is required
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Description</label>
+      <textarea
+        formControlName="description"
+        placeholder="Enter description"
+      ></textarea>
+    </div>
+
+    <div class="error-box" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <div class="success-box" *ngIf="successMessage">
+      {{ successMessage }}
+    </div>
+
+    <div class="actions-row">
+      <button class="btn" type="submit">
+        {{ isEditMode ? 'Update' : 'Create' }}
+      </button>
+
+      <button
+        class="btn secondary"
+        type="button"
+        *ngIf="isEditMode"
+        (click)="resetForm()"
+      >
+        Cancel
+      </button>
+    </div>
+
+  </form>
+
+  <div class="table-wrap">
+
+    <div *ngIf="loading" class="loading">
+      <div class="spinner"></div>
+      <span>Loading categories...</span>
+    </div>
+
+    <table class="table" *ngIf="!loading && typeDocuments.length > 0">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th class="th-actions">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let cat of typeDocuments">
+          <td>{{ cat.idType }}</td>
+          <td>{{ cat.nameType }}</td>
+          <td>{{ cat.description || '—' }}</td>
+          <td>
+            <div class="actions">
+              <button
+                class="act-btn act-edit"
+                type="button"
+                title="Edit"
+                (click)="onEdit(cat)"
+              >
+                <svg viewBox="0 0 16 16" fill="none">
+                  <path
+                    d="M11 2l3 3-8 8H3v-3l8-8z"
+                    stroke="currentColor"
+                    stroke-width="1.2"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+
+              <button
+                class="act-btn act-del"
+                type="button"
+                title="Delete"
+                (click)="onDelete(cat.idType)"
+              >
+                <svg viewBox="0 0 16 16" fill="none">
+                  <path
+                    d="M3 4h10M6 4V2h4v2M5 4l1 9h4l1-9"
+                    stroke="currentColor"
+                    stroke-width="1.2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="!loading && typeDocuments.length === 0" class="empty">
+      No categories found
+    </div>
+
+  </div>
+
+</div>

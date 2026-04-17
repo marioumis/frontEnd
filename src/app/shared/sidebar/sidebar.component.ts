@@ -18,7 +18,7 @@ export class SidebarComponent {
   navItems = [
     {
       label: 'Dashboard',
-      route: '/dashboard',
+      route: '/admin/dashboard',
       icon: 'dashboard'
     },
     {
@@ -32,14 +32,19 @@ export class SidebarComponent {
       icon: 'departments'
     },
     {
-      label: 'Templates',
-      route: '/admin/templates',
-      icon: 'templates'
+      label: 'Categories',
+      route: '/admin/categories',
+      icon: 'categories'
     },
     {
       label: 'Settings',
       route: '/admin/settings',
       icon: 'settings'
+    },
+     {
+      label: 'Templates',
+      route: '/admin/templates',
+      icon: 'templates'
     }
   ];
 

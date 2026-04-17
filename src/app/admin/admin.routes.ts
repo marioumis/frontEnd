@@ -12,7 +12,7 @@ export const adminRoutes: Routes = [
       {
         path: 'dashboard',
         loadComponent: () =>
-          import('./dashboard/dashboard').then(m => m.Dashboard)
+          import('./dashboard/dashboard').then(m => m.DashboardComponent)
       },
       {
         path: 'users',
@@ -28,6 +28,33 @@ export const adminRoutes: Routes = [
         loadComponent: () =>
           import('./departments/department.component').then(m => m.DepartmentComponent)
       },
+  {
+  path: 'categories',
+  loadComponent: () =>
+    import('./categories/type-document.component').then(m => m.CategoryComponent)
+},
+ {
+      path: 'templates',
+      loadComponent: () =>
+        import('./templates/Dynamic document.component').then(m => m.DynamicDocumentComponent)
+    },
+    {
+  path: 'templates/:id',
+  loadComponent: () =>
+    import('./fields/template-detail.component')
+      .then(m => m.TemplateDetailComponent)
+},
+{
+  path: 'templates/:id/test',
+  loadComponent: () =>
+    import('./templates/template-test/template-test.component')
+      .then(m => m.TemplateTestComponent)
+},
+  {
+    path: 'settings',
+    loadComponent: () =>
+      import('../user/settings/user-settings.component').then(m => m.UserSettingsComponent)
+  }
       /*{
         path: 'templates',
         loadComponent: () =>

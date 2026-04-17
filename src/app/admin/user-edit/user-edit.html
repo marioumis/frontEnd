@@ -41,6 +41,9 @@
         <button type="button" class="btn-cancel" [routerLink]="['/admin/users']">
           Cancel
         </button>
+         <button type="button" class="btn-dept-admin" (click)="makeDeptAdmin()" [disabled]="loading">
+          Make Dept Admin
+        </button>
         <button type="submit" class="btn-save" [disabled]="loading">
           {{ loading ? 'Saving...' : 'Save Changes' }}
         </button>

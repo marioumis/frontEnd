@@ -1,0 +1,188 @@
+<div class="test-page">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <button class="back-btn" (click)="goBack()">
+      ← Back to Template
+    </button>
+    <div *ngIf="template" class="title-area">
+      <h2>🧪 Test: {{ template.name }}</h2>
+      <span class="badge" style="background:#dbeafe; color:#2563eb">
+        {{ template.typeDocumentName }}
+      </span>
+    </div>
+  </div>
+
+  <!-- NOTICE -->
+  <div *ngIf="notice" class="notice" [class.error]="notice.type === 'error'">
+    {{ notice.msg }}
+  </div>
+
+  <!-- LOADING -->
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Loading...</p>
+  </div>
+
+  <!-- MAIN -->
+  <div class="test-body" *ngIf="!loading && template">
+
+    <!-- LEFT: Form -->
+    <div class="form-panel">
+
+      <!-- VALIDATION -->
+      <div *ngIf="validationResult && hasWarnings" class="validation-box">
+        <p style="font-weight:600; margin:0 0 10px 0; color:#92400e">
+          ⚠️ Field Configuration Issues
+        </p>
+        <div *ngIf="validationResult.notInFile?.length > 0" style="margin-bottom:8px">
+          <p style="font-size:13px; color:#92400e; margin:0 0 4px 0">
+            Defined but NOT in Word file:
+          </p>
+          <span *ngFor="let k of validationResult.notInFile" class="val-tag warning">
+            {{ '{{' + k + '}}' }}
+          </span>
+        </div>
+        <div *ngIf="validationResult.notInDb?.length > 0">
+          <p style="font-size:13px; color:#dc2626; margin:0 0 4px 0">
+            In file but NOT defined:
+          </p>
+          <span *ngFor="let k of validationResult.notInDb" class="val-tag error">
+            {{ '{{' + k + '}}' }}
+          </span>
+        </div>
+      </div>
+
+      <div *ngIf="validationResult && !hasWarnings" class="validation-ok">
+        ✅ All fields match the Word file!
+      </div>
+
+      <div class="panel-header">
+        <h3>Fill Fields</h3>
+        <small style="color:#6b7280">Choose source for each field</small>
+      </div>
+
+      <!-- Empty -->
+      <div *ngIf="fieldStates.length === 0"
+           style="text-align:center; padding:32px; color:#6b7280">
+        <p>📋 No fields defined</p>
+      </div>
+
+      <!-- Field states -->
+      <div *ngFor="let state of fieldStates" class="field-block">
+
+        <!-- Field header -->
+        <div class="field-header">
+          <span class="field-key">{{ '{{' + state.field.keyName + '}}' }}</span>
+          <span class="field-type-tag">{{ state.field.type }}</span>
+          <span *ngIf="validationResult?.notInFile?.includes(state.field.keyName)"
+                style="color:#f59e0b; font-size:12px">⚠️</span>
+        </div>
+
+        <small *ngIf="state.field.description"
+               style="color:#6b7280; font-size:12px; display:block; margin-bottom:6px">
+          {{ state.field.description }}
+        </small>
+
+        <!-- Source dropdown -->
+        <div style="display:flex; gap:8px; align-items:flex-start; flex-wrap:wrap">
+
+          <select class="source-select"
+                  [(ngModel)]="state.source"
+                  (ngModelChange)="onSourceChange(state)">
+            <option value="MANUAL">✏️ Manual</option>
+            <option value="SYSTEM">⚙️ System</option>
+          </select>
+
+          <!-- MANUAL: input -->
+          <input *ngIf="state.source === 'MANUAL'"
+                 [(ngModel)]="state.manualValue"
+                 [placeholder]="'Enter ' + state.field.keyName"
+                 [type]="state.field.type === 'NUMBER' ? 'number' :
+                         state.field.type === 'DATE' ? 'date' : 'text'"
+                 class="field-input"
+                 [class.field-warning]="validationResult?.notInFile
+                   ?.includes(state.field.keyName)">
+
+          <!-- SYSTEM: sub-dropdown + preview -->
+          <div *ngIf="state.source === 'SYSTEM'"
+               style="display:flex; flex-direction:column; gap:6px; flex:1">
+            <select class="field-input"
+                    [(ngModel)]="state.systemKey"
+                    (ngModelChange)="onSystemKeyChange(state)">
+              <option *ngFor="let sv of systemValues" [value]="sv.key">
+                {{ sv.label }}
+              </option>
+            </select>
+            <!-- Resolved value preview -->
+            <div class="resolved-preview">
+              <span style="color:#6b7280; font-size:11px">Will use: </span>
+              <strong style="color:#059669; font-size:13px">
+                {{ state.resolvedValue || '—' }}
+              </strong>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Generate -->
+      <button class="generate-btn"
+              (click)="generate()"
+              [disabled]="generating || fieldStates.length === 0">
+        <span *ngIf="generating">⏳ Generating...</span>
+        <span *ngIf="!generating">▶ Generate Document</span>
+      </button>
+
+      <!-- Download -->
+      <button *ngIf="generatedFileName"
+              class="download-btn"
+              (click)="download()">
+        ⬇ Download File
+      </button>
+
+    </div>
+
+    <!-- RIGHT: Preview -->
+    <div class="preview-panel">
+      <div class="preview-tabs">
+        <button class="tab-btn"
+                [class.active]="previewMode === 'template'"
+                (click)="switchToTemplate()">
+          📄 Template
+        </button>
+        <button class="tab-btn"
+                [class.active]="previewMode === 'generated'"
+                [disabled]="!generatedPreviewHtml"
+                (click)="switchToGenerated()">
+          ✅ Generated
+        </button>
+      </div>
+
+      <div class="preview-wrap">
+        <div *ngIf="previewMode === 'template'">
+          <div *ngIf="templatePreviewHtml"
+               class="preview-content"
+               [innerHTML]="templatePreviewHtml">
+          </div>
+          <div *ngIf="!templatePreviewHtml" class="preview-placeholder">
+            <div class="spinner"></div>
+            <p>Loading preview...</p>
+          </div>
+        </div>
+
+        <div *ngIf="previewMode === 'generated'">
+          <div *ngIf="generatedPreviewHtml"
+               class="preview-content"
+               [innerHTML]="generatedPreviewHtml">
+          </div>
+          <div *ngIf="!generatedPreviewHtml" class="preview-placeholder">
+            <div class="spinner"></div>
+            <p>Loading generated preview...</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,247 @@
+<div class="detail-page">
+
+  <!-- BACK + TITLE -->
+  <div class="detail-topbar">
+    <button class="back-btn" (click)="goBack()">
+      ← Back to Templates
+    </button>
+    <div *ngIf="template" class="detail-title">
+      <h2>{{ template.name }}</h2>
+      <span class="badge" style="background:#dbeafe; color:#2563eb">
+        {{ template.typeDocumentName }}
+      </span>
+      <span class="badge" [class.active]="template.status">
+        {{ template.status ? 'Active' : 'Inactive' }}
+      </span>
+    </div>
+  </div>
+
+  <!-- NOTICE -->
+  <div *ngIf="notice"
+       class="notice"
+       [class.error]="notice.type === 'error'">
+    {{ notice.msg }}
+  </div>
+
+  <!-- LOADING -->
+  <div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Loading template...</p>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="detail-body" *ngIf="!loading && template">
+
+    <!-- LEFT: Fields panel -->
+    <div class="fields-panel">
+
+      <div class="panel-header">
+        <h3>Fields <span style="color:#6b7280">({{ fields.length }})</span></h3>
+        <button class="btn-small" (click)="openCreateField()">
+          + Add Field
+        </button>
+      </div>
+
+      <!-- ✅ VALIDATION BANNER -->
+      <ng-container *ngIf="validationResult && hasWarnings">
+
+        <div class="validation-box"
+             style="background:#fffbeb; border:1px solid #f59e0b;
+                    border-radius:10px; padding:14px; margin-bottom:12px">
+          <p style="font-weight:600; margin:0 0 10px 0; color:#92400e">
+            ⚠️ Field Configuration Issues
+          </p>
+
+          <div *ngIf="validationResult!.notInFile.length > 0"
+               style="margin-bottom:10px">
+            <p style="font-size:13px; color:#92400e; margin:0 0 6px 0">
+              Defined here but <strong>NOT found</strong> in Word file:
+            </p>
+            <div style="display:flex; flex-wrap:wrap; gap:4px">
+              <span *ngFor="let k of validationResult!.notInFile"
+                    style="background:#fef3c7; color:#92400e; border:1px solid #f59e0b;
+                           border-radius:6px; padding:2px 8px; font-size:12px; font-family:monospace">
+                {{ '{{' + k + '}}' }}
+              </span>
+            </div>
+            <small style="color:#92400e; display:block; margin-top:4px">
+              These fields exist in DB but not in the Word file — they won't be replaced.
+            </small>
+          </div>
+
+          <div *ngIf="validationResult!.notInDb.length > 0">
+            <p style="font-size:13px; color:#dc2626; margin:0 0 6px 0">
+              Found in Word file but <strong>NOT defined</strong> as fields:
+            </p>
+            <div style="display:flex; flex-wrap:wrap; gap:4px">
+              <span *ngFor="let k of validationResult!.notInDb"
+                    style="background:#fee2e2; color:#dc2626; border:1px solid #f87171;
+                           border-radius:6px; padding:2px 8px; font-size:12px; font-family:monospace">
+                {{ '{{' + k + '}}' }}
+              </span>
+            </div>
+            <small style="color:#dc2626; display:block; margin-top:4px">
+              These markers exist in the Word file but have no field — they'll stay unreplaced.
+            </small>
+          </div>
+        </div>
+
+      </ng-container>
+
+      <!-- ✅ ALL GOOD BANNER -->
+      <div *ngIf="validationResult && !hasWarnings"
+           style="background:#f0fdf4; border:1px solid #86efac;
+                  border-radius:10px; padding:10px 14px; margin-bottom:12px;
+                  color:#166534; font-size:13px">
+        ✅ All fields match the Word file perfectly!
+      </div>
+
+      <!-- Field form -->
+      <div *ngIf="fieldMode" class="field-form-box">
+        <h4>{{ fieldMode === 'create' ? 'New Field' : 'Edit Field' }}</h4>
+
+        <form [formGroup]="fieldForm" (ngSubmit)="submitField()">
+          <div class="field">
+            <label>Key Name *
+              <small style="color:#6b7280">(used in template: {{'{{'}}keyName{{'}}'}})</small>
+            </label>
+            <input formControlName="keyName"
+                   placeholder="Ex: NOM_CLIENT"
+                   style="text-transform:uppercase"
+                   [class.invalid]="isInvalid('keyName')">
+            <small *ngIf="isInvalid('keyName')" style="color:red">
+              Key name is required
+            </small>
+          </div>
+
+          <div class="field">
+            <label>Type *</label>
+            <select formControlName="type">
+              <option *ngFor="let t of fieldTypes" [value]="t">{{ t }}</option>
+            </select>
+          </div>
+
+          <div class="field">
+            <label>Description <small style="color:#6b7280">(hint for user)</small></label>
+            <input formControlName="description"
+                   placeholder="Ex: Enter the client's full name">
+          </div>
+
+          <div style="display:flex; gap:8px">
+            <button type="submit"
+                    class="btn-small btn-primary"
+                    [disabled]="submitting"
+                    style="flex:1">
+              {{ submitting ? 'Saving...' : (fieldMode === 'create' ? '✓ Add' : '✓ Save') }}
+            </button>
+            <button type="button"
+                    class="btn-small btn-cancel"
+                    (click)="cancelFieldForm()"
+                    style="flex:1">
+              Cancel
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <div class="panel-header">
+        <h3>Document Preview</h3>
+        <button class="btn-small btn-primary" (click)="goToTest()">
+          🧪 Test Template
+        </button>
+      </div>
+
+      <!-- Loading fields -->
+      <div *ngIf="loadingFields" class="loading">
+        <div class="spinner"></div>
+      </div>
+
+      <!-- Empty fields -->
+      <div *ngIf="!loadingFields && fields.length === 0 && !fieldMode"
+           class="empty-fields">
+        <p>📋 No fields yet</p>
+        <small>
+          {{ template.dynamicFields.length === 0
+            ? 'Add fields manually using the button above'
+            : 'Fields were auto-detected from the template' }}
+        </small>
+      </div>
+
+      <!-- Fields list -->
+      <div *ngFor="let field of fields" class="field-item">
+        <div class="field-item-left">
+          <span class="field-key">{{ '{{' + field.keyName + '}}' }}</span>
+          <span class="field-desc" *ngIf="field.description">
+            {{ field.description }}
+          </span>
+        </div>
+        <div class="field-item-right">
+          <span class="badge field-type-badge">{{ field.type }}</span>
+          <!-- ✅ warn if this field is not in the Word file -->
+          <span *ngIf="validationResult?.notInFile?.includes(field.keyName)"
+                title="Not found in Word file"
+                style="font-size:14px; cursor:default">⚠️</span>
+          <button class="icon-btn edit-btn"
+                  (click)="openEditField(field)"
+                  title="Edit">✏️</button>
+          <button class="icon-btn del-btn"
+                  (click)="askDeleteField(field.fieldId)"
+                  title="Delete">🗑</button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- RIGHT: Preview panel -->
+    <div class="preview-panel">
+      <div class="panel-header">
+        <h3>Document Preview</h3>
+      </div>
+
+      <div class="preview-frame-wrap">
+        <div class="preview-frame-wrap">
+          <div *ngIf="previewHtml"
+               class="preview-content"
+               [innerHTML]="previewHtml">
+          </div>
+          <div *ngIf="!previewHtml" class="preview-placeholder">
+            <p>📄</p>
+            <p>Loading preview...</p>
+          </div>
+        </div>
+        <div *ngIf="!previewUrl" class="preview-placeholder">
+          <p>📄</p>
+          <p>Preview not available</p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- DELETE FIELD CONFIRM -->
+<div *ngIf="confirmDeleteFieldId != null"
+     style="position:fixed;inset:0;background:rgba(0,0,0,0.4);
+            z-index:200;display:flex;align-items:center;justify-content:center">
+  <div style="background:white;border-radius:16px;padding:32px;
+              max-width:380px;width:90%;text-align:center">
+    <p style="font-size:36px">⚠️</p>
+    <h3>Delete this field?</h3>
+    <p style="color:#6b7280;margin-bottom:24px">
+      This will remove the field definition.
+      Any existing generated documents won't be affected.
+    </p>
+    <div style="display:flex;gap:12px;justify-content:center">
+      <button (click)="cancelDeleteField()"
+              style="padding:10px 24px;border-radius:8px;
+                     border:1px solid #ddd;background:white;cursor:pointer">
+        Cancel
+      </button>
+      <button (click)="confirmDeleteField()"
+              style="padding:10px 24px;border-radius:8px;
+                     border:none;background:#dc2626;color:white;cursor:pointer">
+        Delete
+      </button>
+    </div>
+  </div>
+</div>

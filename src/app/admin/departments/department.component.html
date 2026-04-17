@@ -1,91 +1,134 @@
-<div class="department-container">
-  <h2>Department Management</h2>
+<div class="page">
 
-  <form [formGroup]="departmentForm" (ngSubmit)="onSubmit()" class="department-form">
-    
-    <div class="form-group">
-      <label for="nomDep">Department Name</label>
+  <!-- HEADER -->
+  <div class="topbar">
+    <div>
+      <div class="page-eyebrow">Management</div>
+      <div class="page-title">Department <em>directory</em></div>
+      <div class="page-sub">
+        Create, update, and organize departments.
+      </div>
+    </div>
+  </div>
+
+  <!-- FORM -->
+  <form [formGroup]="departmentForm" (ngSubmit)="onSubmit()" class="form">
+
+    <div class="field">
+      <label>Department name</label>
       <input
-        id="nomDep"
         type="text"
         formControlName="nomDep"
         placeholder="Enter department name"
       />
 
-      <small class="error" *ngIf="nomDep?.touched && nomDep?.errors?.['required']">
-        Department name is required.
-      </small>
+      <div class="error" *ngIf="nomDep?.touched && nomDep?.errors?.['required']">
+        Department name is required
+      </div>
 
-      <small class="error" *ngIf="nomDep?.touched && nomDep?.errors?.['maxlength']">
-        Department name must not exceed 50 characters.
-      </small>
+      <div class="error" *ngIf="nomDep?.errors?.['maxlength']">
+        Max 50 characters
+      </div>
     </div>
 
-    <div class="form-group">
-      <label for="description">Description</label>
+    <div class="field">
+      <label>Description</label>
       <textarea
-        id="description"
-        rows="4"
         formControlName="description"
-        placeholder="Enter department description"
+        placeholder="Enter description"
       ></textarea>
 
-      <small class="error" *ngIf="description?.touched && description?.errors?.['maxlength']">
-        Description must not exceed 255 characters.
-      </small>
+      <div class="error" *ngIf="description?.errors?.['maxlength']">
+        Max 255 characters
+      </div>
     </div>
 
-    <div class="form-actions">
-      <button type="submit">
-        {{ isEditMode ? 'Update Department' : 'Add Department' }}
+    <div class="actions-row">
+      <button class="btn" type="submit">
+        {{ isEditMode ? 'Update' : 'Create' }}
       </button>
 
-      <button type="button" *ngIf="isEditMode" (click)="resetForm()">
+      <button
+        class="btn secondary"
+        type="button"
+        *ngIf="isEditMode"
+        (click)="resetForm()"
+      >
         Cancel
       </button>
     </div>
+
+    <div class="error-box" *ngIf="errorMessage">
+      {{ errorMessage }}
+    </div>
+
+    <div class="success-box" *ngIf="successMessage">
+      {{ successMessage }}
+    </div>
+
   </form>
 
-  <div *ngIf="successMessage" class="success-message">
-    {{ successMessage }}
+  <!-- TABLE -->
+  <div class="table-wrap">
+
+    <div *ngIf="loading" class="loading">
+      <div class="spinner"></div>
+      <span>Loading departments...</span>
+    </div>
+
+    <table class="table" *ngIf="!loading && departments.length > 0">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Description</th>
+          <th class="th-actions">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let department of departments">
+          <td>{{ department.idDep }}</td>
+          <td>{{ department.nomDep }}</td>
+          <td>{{ department.description || '—' }}</td>
+
+          <td>
+            <div class="actions">
+
+              <button
+                class="act-btn act-edit"
+                (click)="onEdit(department)"
+                title="Edit"
+              >
+                <svg viewBox="0 0 16 16" fill="none">
+                  <path d="M11 2l3 3-8 8H3v-3l8-8z"
+                    stroke="currentColor"
+                    stroke-width="1.2"/>
+                </svg>
+              </button>
+
+              <button
+                class="act-btn act-del"
+                (click)="onDelete(department.idDep)"
+                title="Delete"
+              >
+                <svg viewBox="0 0 16 16" fill="none">
+                  <path d="M3 4h10M6 4V2h4v2M5 4l1 9h4l1-9"
+                    stroke="currentColor"
+                    stroke-width="1.2"/>
+                </svg>
+              </button>
+
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div *ngIf="!loading && departments.length === 0" class="empty">
+      No departments found
+    </div>
+
   </div>
 
-  <div *ngIf="errorMessage" class="error-message">
-    {{ errorMessage }}
-  </div>
-
-  <hr />
-
-  <h3>Departments List</h3>
-
-  <div *ngIf="loading">
-    Loading departments...
-  </div>
-
-  <table *ngIf="!loading && departments.length > 0" class="department-table">
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Name</th>
-        <th>Description</th>
-        <th style="width: 180px;">Actions</th>
-      </tr>
-    </thead>
-
-    <tbody>
-      <tr *ngFor="let department of departments">
-        <td>{{ department.idDep }}</td>
-        <td>{{ department.nomDep }}</td>
-        <td>{{ department.description }}</td>
-        <td>
-          <button type="button" (click)="onEdit(department)">Edit</button>
-          <button type="button" (click)="onDelete(department.idDep)">Delete</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-
-  <p *ngIf="!loading && departments.length === 0">
-    No departments found.
-  </p>
 </div>

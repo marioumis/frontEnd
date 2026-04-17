@@ -1,1 +1,188 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+
+  <!-- Header -->
+  <div class="dashboard-header">
+    <div>
+      <h1>Dashboard Admin</h1>
+      <span class="subtitle">Vue d'ensemble de la plateforme</span>
+    </div>
+    <button class="refresh-btn" (click)="loadStats()" [disabled]="loading">
+      🔄 Actualiser
+    </button>
+  </div>
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="loading-state">
+    <div class="spinner"></div>
+    <p>Chargement des statistiques...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error && !loading" class="error-state">
+    <span>⚠️ Impossible de charger les statistiques.</span>
+    <button (click)="loadStats()">Réessayer</button>
+  </div>
+
+  <!-- Main content -->
+  <ng-container *ngIf="!loading && !error && stats">
+
+    <!-- STAT CARDS -->
+    <div class="stats-grid">
+
+      <div class="stat-card card-templates">
+        <div class="stat-icon">📄</div>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.totalTemplates }}</span>
+          <span class="stat-label">Total Templates</span>
+        </div>
+        <div class="stat-bg-icon">📄</div>
+      </div>
+
+      <div class="stat-card card-categories">
+        <div class="stat-icon">🗂️</div>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.totalCategories }}</span>
+          <span class="stat-label">Total Catégories</span>
+        </div>
+        <div class="stat-bg-icon">🗂️</div>
+      </div>
+
+      <div class="stat-card card-users">
+        <div class="stat-icon">👥</div>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.totalUsers }}</span>
+          <span class="stat-label">Total Utilisateurs</span>
+        </div>
+        <div class="stat-bg-icon">👥</div>
+      </div>
+
+      <div class="stat-card card-generated">
+        <div class="stat-icon">✅</div>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.totalGenerated }}</span>
+          <span class="stat-label">Documents Générés</span>
+        </div>
+        <div class="stat-bg-icon">✅</div>
+      </div>
+
+    </div>
+
+    <!-- CHARTS -->
+    <div class="charts-grid">
+
+      <!-- Bar chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3>📊 Templates par catégorie</h3>
+        </div>
+        <div class="bar-chart">
+          <ng-container *ngIf="barChartLabels.length > 0; else noBarData">
+            <div *ngFor="let label of barChartLabels; let i = index" class="bar-row">
+              <span class="bar-label">{{ label }}</span>
+              <div class="bar-track">
+                <div class="bar-fill" [style.width.%]="getBarWidth(barChartData[i])">
+                  <span class="bar-tooltip">{{ barChartData[i] }}</span>
+                </div>
+              </div>
+              <span class="bar-count">{{ barChartData[i] }}</span>
+            </div>
+          </ng-container>
+          <ng-template #noBarData>
+            <div class="empty-chart">Aucune donnée disponible</div>
+          </ng-template>
+        </div>
+      </div>
+
+      <!-- Line chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <h3>📈 Documents générés cette semaine</h3>
+        </div>
+        <div class="line-chart-wrapper">
+          <div class="line-bars">
+            <div *ngFor="let day of lineChartLabels; let i = index" class="line-col">
+              <span class="line-value">{{ lineChartData[i] }}</span>
+              <div class="line-bar" [style.height.%]="getLineHeight(lineChartData[i])"></div>
+              <span class="line-label">{{ day }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- BOTTOM: Recent docs + Quick actions -->
+    <div class="bottom-grid">
+
+      <!-- Recent documents -->
+      <div class="panel recent-card">
+        <div class="panel-header">
+          <h3>🕒 Derniers documents générés</h3>
+          <span class="badge">{{ stats.recentDocuments.length }}</span>
+        </div>
+        <div class="table-wrapper">
+          <table class="recent-table">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Document</th>
+                <th>Utilisateur</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let doc of stats.recentDocuments; let i = index">
+                <td class="row-num">{{ i + 1 }}</td>
+                <td>
+                  <span class="doc-name">{{ doc.documentName }}</span>
+                </td>
+                <td>
+                  <span class="user-badge">{{ doc.userName }}</span>
+                </td>
+                <td class="date-cell">{{ doc.generatedAt }}</td>
+              </tr>
+              <tr *ngIf="stats.recentDocuments.length === 0">
+                <td colspan="4" class="empty-row">Aucun document récent</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Quick actions -->
+      <div class="panel actions-card">
+        <div class="panel-header">
+          <h3>⚡ Actions rapides</h3>
+        </div>
+        <div class="actions-list">
+          <button class="action-btn btn-template" (click)="navigate('/admin/templates/new')">
+            <span class="action-icon">📄</span>
+            <div class="action-text">
+              <span class="action-title">Nouveau Template</span>
+              <span class="action-desc">Créer un modèle de document</span>
+            </div>
+            <span class="action-arrow">→</span>
+          </button>
+          <button class="action-btn btn-category" (click)="navigate('/admin/categories/new')">
+            <span class="action-icon">🗂️</span>
+            <div class="action-text">
+              <span class="action-title">Nouvelle Catégorie</span>
+              <span class="action-desc">Organiser vos templates</span>
+            </div>
+            <span class="action-arrow">→</span>
+          </button>
+          <button class="action-btn btn-users" (click)="navigate('/admin/users')">
+            <span class="action-icon">👥</span>
+            <div class="action-text">
+              <span class="action-title">Gérer les Utilisateurs</span>
+              <span class="action-desc">Accès et permissions</span>
+            </div>
+            <span class="action-arrow">→</span>
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+  </ng-container>
+</div>

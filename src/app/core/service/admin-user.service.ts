@@ -41,4 +41,14 @@ export class AdminUserService {
   // Use .patch because we are only changing one field (activated)
   return this.http.patch(`http://localhost:8081/api/v1/admin/users/${id}/toggle`, {});
 }
+
+// PUT: Assign DEPT_ADMIN role
+makeDeptAdmin(id: number): Observable<AdminUserResponse> {
+  return this.http.put<AdminUserResponse>(`${this.apiUrl}/${id}/make-dept-admin`, {});
+}
+
+// POST: Invite user by email
+inviteUser(email: string): Observable<AdminUserResponse> {
+  return this.http.post<AdminUserResponse>(`${this.apiUrl}/invite`, { email });
+}
 }

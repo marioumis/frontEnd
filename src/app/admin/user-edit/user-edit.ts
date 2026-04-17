@@ -70,7 +70,14 @@ ngOnInit(): void {
       }
     });
   }
-
+makeDeptAdmin(): void {
+  if (confirm('Are you sure you want to make this user a Department Admin?')) {
+    this.adminService.makeDeptAdmin(this.userId).subscribe({
+      next: () => alert('User is now a Department Admin!'),
+      error: (err) => alert('Failed: ' + err.message)
+    });
+  }
+}
   onSave(): void {
     // 3. Call updateUser(id, request) method
     this.adminService.updateUser(this.userId, this.userRequest).subscribe({

@@ -1,0 +1,176 @@
+:host {
+  display: block;
+  background: #f7f9fc;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.page {
+  padding: 30px;
+}
+
+/* HEADER */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.page-title {
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.page-title em {
+  color: #2563eb;
+  font-style: normal;
+}
+
+.top-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* TABLE */
+.table-wrap {
+  background: white;
+  border-radius: 16px;
+  padding: 10px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table th {
+  font-size: 12px;
+  text-transform: uppercase;
+  color: #6b7280;
+  padding: 12px;
+}
+
+.table td {
+  padding: 14px;
+  border-top: 1px solid #eee;
+}
+
+.table tr:hover {
+  background: #f8fbff;
+}
+
+/* ACTIONS */
+.actions {
+  display: flex;
+  gap: 8px;
+}
+
+.act-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+  background: white;
+  cursor: pointer;
+}
+
+.act-edit:hover {
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.act-del:hover {
+  background: #fee2e2;
+  color: red;
+}
+
+/* BADGE */
+.badge {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #eee;
+}
+
+.badge.active {
+  background: #dcfce7;
+  color: green;
+}
+
+/* DRAWER */
+.drawer {
+  position: fixed;
+  top: 0;
+  right: -400px;
+  width: 400px;
+  height: 100%;
+  background: white;
+  box-shadow: -5px 0 20px rgba(0,0,0,0.1);
+  transition: 0.3s;
+  padding: 20px;
+}
+
+.drawer.open {
+  right: 0;
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+
+/* FORM */
+.field {
+  margin-bottom: 15px;
+  display: flex;
+  flex-direction: column;
+}
+
+.field input,
+.field select {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.btn {
+  background: #2563eb;
+  color: white;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+}
+
+/* LOADING */
+.loading {
+  text-align: center;
+  padding: 20px;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #ddd;
+  border-top: 2px solid #2563eb;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* NOTICE */
+.notice {
+  padding: 10px;
+  background: #dcfce7;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+
+.notice.error {
+  background: #fee2e2;
+}

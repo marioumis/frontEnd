@@ -72,7 +72,7 @@ export class RegisterComponent implements AfterViewInit {
     });
   }
   ngAfterViewInit() {
-    const canvas = document.getElementById('cv2') as HTMLCanvasElement;
+    const canvas = document.getElementById('cv') as HTMLCanvasElement;
     const ctx = canvas.getContext('2d')!;
     let W = canvas.width = canvas.offsetWidth;
     let H = canvas.height = canvas.offsetHeight;
@@ -97,14 +97,14 @@ export class RegisterComponent implements AfterViewInit {
             ctx.beginPath();
             ctx.moveTo(pts[i].x, pts[i].y);
             ctx.lineTo(pts[j].x, pts[j].y);
-            ctx.strokeStyle = `rgba(176,125,42,${0.15 * (1 - d / 100)})`;
+            ctx.strokeStyle = `rgba(96,165,250,${0.25 * (1 - d / 100)})`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }
         }
         ctx.beginPath();
         ctx.arc(pts[i].x, pts[i].y, pts[i].r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(176,125,42,${pts[i].a})`;
+        ctx.fillStyle = `rgba(96,165,250,${pts[i].a})`;
         ctx.fill();
         pts[i].x += pts[i].vx; pts[i].y += pts[i].vy;
         if (pts[i].x < 0 || pts[i].x > W) pts[i].vx *= -1;

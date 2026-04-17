@@ -1,0 +1,115 @@
+<div class="page">
+
+  <div class="topbar">
+    <div>
+      <div class="page-eyebrow">Account</div>
+      <div class="page-title">My <em>Settings</em></div>
+    </div>
+    <a class="btn-back" routerLink="/user/home">
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+        <path d="M10 12L6 8l4-4" stroke="currentColor" stroke-width="1.4"
+          stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Back to Templates
+    </a>
+  </div>
+
+  <div class="settings-grid">
+
+    <!-- Profile Card -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5"/>
+            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"
+              stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <h2>Profile Information</h2>
+          <p>Update your personal details</p>
+        </div>
+      </div>
+
+      @if (profileSuccess) {
+        <div class="alert alert-success">✅ {{ profileSuccess }}</div>
+      }
+      @if (profileError) {
+        <div class="alert alert-error">❌ {{ profileError }}</div>
+      }
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label>First Name</label>
+          <input type="text" [(ngModel)]="profile.firstName" placeholder="First name"/>
+        </div>
+        <div class="form-group">
+          <label>Last Name</label>
+          <input type="text" [(ngModel)]="profile.lastName" placeholder="Last name"/>
+        </div>
+        <div class="form-group full">
+          <label>Username</label>
+          <input type="text" [(ngModel)]="profile.login" placeholder="username"/>
+        </div>
+        <div class="form-group full">
+          <label>Email Address</label>
+          <input type="email" [(ngModel)]="profile.email" placeholder="email@example.com"/>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn-save" type="button" (click)="saveProfile()" [disabled]="profileLoading">
+          {{ profileLoading ? 'Saving...' : 'Save Changes' }}
+        </button>
+      </div>
+    </div>
+
+    <!-- Password Card -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon card-icon-warn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <rect x="5" y="11" width="14" height="10" rx="2"
+              stroke="currentColor" stroke-width="1.5"/>
+            <path d="M8 11V7a4 4 0 0 1 8 0v4"
+              stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <h2>Change Password</h2>
+          <p>Keep your account secure</p>
+        </div>
+      </div>
+
+      @if (passwordSuccess) {
+        <div class="alert alert-success">✅ {{ passwordSuccess }}</div>
+      }
+      @if (passwordError) {
+        <div class="alert alert-error">❌ {{ passwordError }}</div>
+      }
+
+      <div class="form-grid">
+        <div class="form-group full">
+          <label>Current Password</label>
+          <input type="password" [(ngModel)]="passwords.currentPassword" placeholder="Current password"/>
+        </div>
+        <div class="form-group">
+          <label>New Password</label>
+          <input type="password" [(ngModel)]="passwords.newPassword" placeholder="New password"/>
+        </div>
+        <div class="form-group">
+          <label>Confirm Password</label>
+          <input type="password" [(ngModel)]="passwords.confirmPassword" placeholder="Confirm password"/>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn-save" type="button" (click)="resetPassword()" [disabled]="passwordLoading">
+          {{ passwordLoading ? 'Changing...' : 'Change Password' }}
+        </button>
+      </div>
+    </div>
+
+  </div>
+</div>
