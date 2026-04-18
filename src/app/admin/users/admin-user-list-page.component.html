@@ -1,0 +1,151 @@
+<div class="page">
+  <div class="topbar">
+    <div>
+      <div class="page-eyebrow">Management</div>
+      <div class="page-title">User <em>Directory</em></div>
+      <div class="page-sub">Search, edit, deactivate, and remove platform users from one admin view.</div>
+    </div>
+
+    <div class="topbar-right">
+      <button class="btn-primary" type="button" [routerLink]="['/admin/invitations']">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+        </svg>
+        Manage Invitations
+      </button>
+
+      <div class="search-wrap">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <circle cx="7" cy="7" r="4.75" stroke="currentColor" stroke-width="1.4" />
+          <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+        </svg>
+
+        <input
+          [(ngModel)]="searchTerm"
+          (input)="onSearch()"
+          type="text"
+          placeholder="Search users" />
+      </div>
+    </div>
+  </div>
+
+  @if (successMessage) {
+    <div class="alert alert-success">{{ successMessage }}</div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert alert-error">{{ errorMessage }}</div>
+  }
+
+  <div class="table-wrap">
+    @if (loading) {
+      <div class="loading">
+        <div class="spinner"></div>
+        <span>Loading users...</span>
+      </div>
+    }
+
+    @if (!loading) {
+      <table class="table">
+        <thead>
+          <tr>
+            <th>User</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Department</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th class="th-actions">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (user of users; track user.id) {
+            <tr>
+              <td>
+                <div class="user-cell">
+                  <div class="avatar">{{ getInitials(user) }}</div>
+                  <div class="user-meta">
+                    <div class="user-name">{{ user.firstName }} {{ user.lastName }}</div>
+                    <div class="user-id">ID {{ user.id }}</div>
+                  </div>
+                </div>
+              </td>
+
+              <td class="subtle-text">{{ user.login || 'Not set' }}</td>
+              <td class="subtle-text">{{ user.email }}</td>
+              <td>{{ user.departmentName || 'Unassigned' }}</td>
+              <td>
+                <span class="badge badge-role">{{ getPrimaryRole(user) }}</span>
+              </td>
+              <td>
+                <span class="badge" [class.badge-active]="user.activated" [class.badge-inactive]="!user.activated">
+                  {{ user.activated ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td>
+                <div class="actions">
+                  <button
+                    class="act-btn act-edit"
+                    type="button"
+                    title="Edit user"
+                    [routerLink]="['/admin/users/edit', user.id]">
+                    <svg viewBox="0 0 16 16" fill="none">
+                      <path
+                        d="M11 2l3 3-8 8H3v-3l8-8z"
+                        stroke="currentColor"
+                        stroke-width="1.2"
+                        stroke-linejoin="round" />
+                    </svg>
+                  </button>
+
+                  <button
+                    class="act-btn"
+                    [class.act-toggle-off]="user.activated"
+                    [class.act-toggle-on]="!user.activated"
+                    type="button"
+                    [title]="user.activated ? 'Deactivate user' : 'Activate user'"
+                    (click)="toggleUserStatus(user)">
+                    @if (user.activated) {
+                      <svg viewBox="0 0 16 16" fill="none">
+                        <path
+                          d="M8 15A7 7 0 108 1a7 7 0 000 14zM5.5 5.5l5 5M10.5 5.5l-5 5"
+                          stroke="currentColor"
+                          stroke-width="1.2"
+                          stroke-linecap="round" />
+                      </svg>
+                    } @else {
+                      <svg viewBox="0 0 16 16" fill="none">
+                        <path
+                          d="M3 8l3 3 7-7"
+                          stroke="currentColor"
+                          stroke-width="1.8"
+                          stroke-linecap="round"
+                          stroke-linejoin="round" />
+                      </svg>
+                    }
+                  </button>
+
+                  <button class="act-btn act-del" type="button" title="Delete user" (click)="deleteUser(user.id)">
+                    <svg viewBox="0 0 16 16" fill="none">
+                      <path
+                        d="M3 4h10M6 4V2h4v2M5 4l1 9h4l1-9"
+                        stroke="currentColor"
+                        stroke-width="1.2"
+                        stroke-linecap="round"
+                        stroke-linejoin="round" />
+                    </svg>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="empty">No users found.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>

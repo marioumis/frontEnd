@@ -1,0 +1,180 @@
+<div class="page">
+  @if (notice) {
+    <div class="notice" [class.error]="notice.type === 'error'">
+      {{ notice.msg }}
+    </div>
+  }
+
+  <div class="topbar">
+    <div>
+      <div class="page-eyebrow">Department Admin</div>
+      <div class="page-title">Department <em>Templates</em></div>
+      <div class="page-sub">Manage templates only under the categories linked to your department.</div>
+    </div>
+
+    <div class="top-actions">
+      <select [(ngModel)]="selectedTypeId" (change)="onCategoryChange()" class="category-filter">
+        <option value="">All Department Categories</option>
+        @for (type of typeDocuments; track type.idType) {
+          <option [value]="type.idType">{{ type.nameType }}</option>
+        }
+      </select>
+
+      <button class="btn" type="button" (click)="openCreate()">
+        + New Template
+      </button>
+    </div>
+  </div>
+
+  @if (selectedTypeDescription) {
+    <p class="type-description">{{ selectedTypeDescription }}</p>
+  }
+
+  @if (loadingGrid) {
+    <div class="loading">
+      <div class="spinner"></div>
+      <p>Loading templates...</p>
+    </div>
+  }
+
+  @if (!loadingGrid && displayedTemplates.length === 0) {
+    <div class="empty-state">
+      <p class="empty-icon">T</p>
+      <p class="empty-title">No department templates found</p>
+      <p class="empty-sub">Create your first department template to get started.</p>
+      <button class="btn" type="button" (click)="openCreate()">+ New Template</button>
+    </div>
+  }
+
+  @if (!loadingGrid && displayedTemplates.length > 0) {
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Category</th>
+            <th>Fields</th>
+            <th>Scan Mode</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (document of displayedTemplates; track document.docId) {
+            <tr>
+              <td>
+                <strong>{{ document.name }}</strong>
+                <br />
+                <small class="muted">{{ document.templateFileName }}</small>
+              </td>
+              <td>
+                <span class="badge badge-type">{{ document.typeDocumentName }}</span>
+              </td>
+              <td>{{ fieldCount(document) }} fields</td>
+              <td>
+                <span
+                  class="badge"
+                  [class.badge-auto]="fieldCount(document) > 0"
+                  [class.badge-manual]="fieldCount(document) === 0">
+                  {{ scanModeLabel(document) }}
+                </span>
+              </td>
+              <td>
+                <span class="badge" [class.badge-active]="document.status" [class.badge-inactive]="!document.status">
+                  {{ document.status ? 'Active' : 'Inactive' }}
+                </span>
+              </td>
+              <td>
+                <div class="actions">
+                  <button class="act-btn act-edit" type="button" title="Edit" (click)="openEdit(document)">Edit</button>
+                  <button class="act-btn act-del" type="button" title="Delete" (click)="askDelete(document.docId)">Delete</button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>
+
+@if (drawerOpen) {
+  <div class="drawer-overlay" (click)="closeDrawer()"></div>
+}
+
+<div class="drawer" [class.open]="drawerOpen">
+  @if (drawerMode === 'create' || drawerMode === 'edit') {
+    <div class="drawer-header">
+      <strong>{{ drawerMode === 'create' ? 'New Template' : 'Edit Template' }}</strong>
+      <button type="button" class="drawer-close" (click)="closeDrawer()">x</button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()">
+      <div class="field">
+        <label>Template Name *</label>
+        <input formControlName="name" placeholder="Ex: Department contract" />
+      </div>
+
+      <div class="field">
+        <label>Category *</label>
+        <select formControlName="typeDocumentId">
+          <option [ngValue]="null" disabled>Select a department category</option>
+          @for (type of typeDocuments; track type.idType) {
+            <option [value]="type.idType">{{ type.nameType }}</option>
+          }
+        </select>
+      </div>
+
+      <div class="field">
+        <label>Display Order</label>
+        <input formControlName="orderIndex" type="number" placeholder="Optional" />
+      </div>
+
+      <div class="field checkbox-field">
+        <input id="dept-template-status" type="checkbox" formControlName="status" />
+        <label for="dept-template-status">Active</label>
+      </div>
+
+      <div class="field">
+        <label>Scan Mode</label>
+        <select formControlName="autoScan">
+          <option [ngValue]="true">Auto</option>
+          <option [ngValue]="false">Manual</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label>
+          Word Template (.doc / .docx)
+          {{ drawerMode === 'edit' ? '- leave empty to keep current file' : '*' }}
+        </label>
+        <input type="file" accept=".doc,.docx" (change)="onFileChange($event)" />
+
+        @if (selectedFile) {
+          <small class="file-success">{{ selectedFile.name }}</small>
+        }
+
+        @if (fileError) {
+          <small class="file-error">{{ fileError }}</small>
+        }
+      </div>
+
+      <button class="btn submit-btn" type="submit" [disabled]="submitting">
+        {{ submitting ? 'Saving...' : (drawerMode === 'create' ? 'Create Template' : 'Save Changes') }}
+      </button>
+    </form>
+  }
+</div>
+
+@if (confirmOpen) {
+  <div class="confirm-overlay">
+    <div class="confirm-card">
+      <h3>Delete Template?</h3>
+      <p>This will permanently delete the template and its generated field definitions.</p>
+      <div class="confirm-actions">
+        <button type="button" class="confirm-cancel" (click)="cancelDelete()">Cancel</button>
+        <button type="button" class="confirm-delete" (click)="confirmDelete()">Yes, Delete</button>
+      </div>
+    </div>
+  </div>
+}

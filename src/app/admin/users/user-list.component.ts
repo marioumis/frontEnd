@@ -18,11 +18,7 @@ export class UserListComponent implements OnInit {
   searchTerm = '';
   loading = false;
 
-  // invite modal state
-  showInviteModal = false;
-  inviteEmail = '';
-  inviteLoading = false;
-  inviteError = '';
+
 
   constructor(private adminService: AdminUserService) {}
 
@@ -54,7 +50,7 @@ export class UserListComponent implements OnInit {
   }
 
   deleteUser(id: number): void {
-    if (confirm('Are you sure you want to delete this user?')) {
+    if (confirm('Are you sure you want to delete this user? This will also clean up any department management links.')) {
       this.adminService.deleteUser(id).subscribe({
         next: () => {
           this.users = this.users.filter(u => u.id !== id);
@@ -64,34 +60,23 @@ export class UserListComponent implements OnInit {
     }
   }
 
-  // ── Invite modal ──
-  openInviteModal(): void {
-    this.inviteEmail = '';
-    this.inviteError = '';
-    this.showInviteModal = true;
-  }
-
-  closeInviteModal(): void {
-    this.showInviteModal = false;
-  }
-
-  sendInvite(): void {
-    if (!this.inviteEmail.trim()) {
-      this.inviteError = 'Email is required.';
-      return;
+  toggleUserStatus(user: AdminUserResponse): void {
+    const action = user.activated ? 'deactivate' : 'activate';
+    let message = `Are you sure you want to ${action} this user?`;
+    
+    if (user.roles.includes('DEPT_ADMIN')) {
+      message = `This user is a Department Administrator. ${action.toUpperCase()}ING them will also ${action} ALL users in their department. Continue?`;
     }
-    this.inviteLoading = true;
-    this.inviteError = '';
-    this.adminService.inviteUser(this.inviteEmail).subscribe({
-      next: () => {
-        this.inviteLoading = false;
-        this.closeInviteModal();
-        this.loadUsers(); // refresh list
-      },
-      error: (err) => {
-        this.inviteLoading = false;
-        this.inviteError = err.error?.message || 'Invitation failed. Try again.';
-      }
-    });
+
+    if (confirm(message)) {
+      this.adminService.toggleUserStatus(user.id).subscribe({
+        next: () => {
+          this.loadUsers(); // Reload to see cascading changes
+        },
+        error: (err) => alert('Failed to toggle status: ' + err.message)
+      });
+    }
   }
+
+
 }

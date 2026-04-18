@@ -1,0 +1,146 @@
+<div class="page">
+  <div class="topbar">
+    <div>
+      <div class="page-eyebrow">Admin</div>
+      <div class="page-title">Edit <em>Profile</em></div>
+      <div class="page-sub">Manage your account details and password from the admin area.</div>
+    </div>
+  </div>
+
+  <div class="settings-grid">
+    <section class="card">
+      <div class="card-header">
+        <div class="card-icon">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="1.5" />
+            <path
+              d="M4 20c0-4 3.6-7 8-7s8 3 8 7"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round" />
+          </svg>
+        </div>
+
+        <div>
+          <h2>Profile Information</h2>
+          <p>These values are stored through the shared `/users/me` endpoint.</p>
+        </div>
+      </div>
+
+      @if (profileSuccess) {
+        <div class="alert alert-success">{{ profileSuccess }}</div>
+      }
+
+      @if (profileError) {
+        <div class="alert alert-error">{{ profileError }}</div>
+      }
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="admin-profile-first-name">First Name</label>
+          <input
+            id="admin-profile-first-name"
+            type="text"
+            [(ngModel)]="profile.firstName"
+            placeholder="First name" />
+        </div>
+
+        <div class="form-group">
+          <label for="admin-profile-last-name">Last Name</label>
+          <input
+            id="admin-profile-last-name"
+            type="text"
+            [(ngModel)]="profile.lastName"
+            placeholder="Last name" />
+        </div>
+
+        <div class="form-group full">
+          <label for="admin-profile-login">Username</label>
+          <input
+            id="admin-profile-login"
+            type="text"
+            [(ngModel)]="profile.login"
+            placeholder="Username" />
+        </div>
+
+        <div class="form-group full">
+          <label for="admin-profile-email">Email Address</label>
+          <input
+            id="admin-profile-email"
+            type="email"
+            [(ngModel)]="profile.email"
+            placeholder="name@example.com" />
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn-primary" type="button" (click)="saveProfile()" [disabled]="profileLoading">
+          {{ profileLoading ? 'Saving...' : 'Save Changes' }}
+        </button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-header">
+        <div class="card-icon card-icon-warn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor" stroke-width="1.5" />
+            <path
+              d="M8 11V7a4 4 0 0 1 8 0v4"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round" />
+          </svg>
+        </div>
+
+        <div>
+          <h2>Change Password</h2>
+          <p>Use the same account password flow already shared by admins and users.</p>
+        </div>
+      </div>
+
+      @if (passwordSuccess) {
+        <div class="alert alert-success">{{ passwordSuccess }}</div>
+      }
+
+      @if (passwordError) {
+        <div class="alert alert-error">{{ passwordError }}</div>
+      }
+
+      <div class="form-grid">
+        <div class="form-group full">
+          <label for="admin-current-password">Current Password</label>
+          <input
+            id="admin-current-password"
+            type="password"
+            [(ngModel)]="passwords.currentPassword"
+            placeholder="Current password" />
+        </div>
+
+        <div class="form-group">
+          <label for="admin-new-password">New Password</label>
+          <input
+            id="admin-new-password"
+            type="password"
+            [(ngModel)]="passwords.newPassword"
+            placeholder="New password" />
+        </div>
+
+        <div class="form-group">
+          <label for="admin-confirm-password">Confirm Password</label>
+          <input
+            id="admin-confirm-password"
+            type="password"
+            [(ngModel)]="passwords.confirmPassword"
+            placeholder="Confirm password" />
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn-primary" type="button" (click)="changePassword()" [disabled]="passwordLoading">
+          {{ passwordLoading ? 'Updating...' : 'Change Password' }}
+        </button>
+      </div>
+    </section>
+  </div>
+</div>

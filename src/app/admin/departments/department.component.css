@@ -409,3 +409,14 @@
     padding: 16px;
   }
 }
+
+.admin-chip {
+  background: #f0f7ff;
+  color: #0284c7;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  border: 1px solid #e0f2fe;
+  display: inline-block;
+}

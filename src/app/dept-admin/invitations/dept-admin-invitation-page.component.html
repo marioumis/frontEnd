@@ -1,0 +1,170 @@
+<div class="page">
+  <div class="topbar">
+    <div>
+      <div class="page-eyebrow">Department Admin</div>
+      <div class="page-title">Team <em>Invitations</em></div>
+      <div class="page-sub">
+        Invite users into {{ currentUser?.departmentName || 'your department' }}. This view only shows invitations sent by your account.
+      </div>
+    </div>
+
+    <div class="topbar-right">
+      <div class="search-wrap">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <circle cx="7" cy="7" r="4.75" stroke="currentColor" stroke-width="1.4" />
+          <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+        </svg>
+        <input
+          [(ngModel)]="searchTerm"
+          (input)="applyFilters()"
+          type="text"
+          placeholder="Search invitations" />
+      </div>
+
+      <select class="status-select" [(ngModel)]="statusFilter" (ngModelChange)="applyFilters()">
+        @for (status of statusFilters; track status) {
+          <option [value]="status">{{ status === 'ALL' ? 'All statuses' : status }}</option>
+        }
+      </select>
+
+      <button class="btn-primary" type="button" (click)="openInviteModal()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+        </svg>
+        Invite User
+      </button>
+    </div>
+  </div>
+
+  @if (successMessage) {
+    <div class="alert alert-success">{{ successMessage }}</div>
+  }
+
+  @if (errorMessage) {
+    <div class="alert alert-error">{{ errorMessage }}</div>
+  }
+
+  <div class="table-wrap">
+    @if (loading) {
+      <div class="loading">
+        <div class="spinner"></div>
+        <span>Loading invitations...</span>
+      </div>
+    }
+
+    @if (!loading) {
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Status</th>
+            <th>Sent</th>
+            <th>Expires</th>
+            <th>Invited By</th>
+            <th class="th-actions">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          @for (invitation of filteredInvitations; track invitation.id) {
+            <tr>
+              <td>
+                <div class="user-cell">
+                  <div class="avatar">{{ invitation.email.slice(0, 1).toUpperCase() }}</div>
+                  <div>
+                    <div class="user-name">{{ invitation.email }}</div>
+                    <div class="subtle-text">ID {{ invitation.id }}</div>
+                  </div>
+                </div>
+              </td>
+
+              <td><span class="badge badge-role">{{ invitation.role }}</span></td>
+
+              <td>
+                <span
+                  class="badge"
+                  [class.badge-pending]="invitation.status === 'PENDING'"
+                  [class.badge-success]="invitation.status === 'ACCEPTED'"
+                  [class.badge-danger]="invitation.status === 'EXPIRED' || invitation.status === 'CANCELLED'">
+                  {{ invitation.status }}
+                </span>
+              </td>
+
+              <td class="subtle-text">{{ invitation.sentAt | date: 'mediumDate' }}</td>
+              <td class="subtle-text">{{ invitation.expiresAt | date: 'mediumDate' }}</td>
+              <td class="subtle-text">{{ invitation.inviterEmail }}</td>
+
+              <td>
+                <div class="actions">
+                  @if (invitation.status === 'PENDING') {
+                    <button class="act-btn act-warning" type="button" title="Cancel invitation" (click)="cancelInvitation(invitation.id)">
+                      <svg viewBox="0 0 16 16" fill="none">
+                        <path
+                          d="M3 4h10M6 4V2h4v2M5 4l1 9h4l1-9"
+                          stroke="currentColor"
+                          stroke-width="1.2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round" />
+                      </svg>
+                    </button>
+                  } @else {
+                    <button class="act-btn act-danger" type="button" title="Delete history" (click)="deletePermanently(invitation.id)">
+                      <svg viewBox="0 0 16 16" fill="none">
+                        <path
+                          d="M3 4h10M6 4V2h4v2M5 4l1 9h4l1-9"
+                          stroke="currentColor"
+                          stroke-width="1.2"
+                          stroke-linecap="round"
+                          stroke-linejoin="round" />
+                      </svg>
+                    </button>
+                  }
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="empty">No invitations found.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>
+
+@if (showInviteModal) {
+  <div class="modal-overlay" (click)="closeInviteModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <div>
+          <h2>Invite Department User</h2>
+          <p>This invitation will create a user under {{ currentUser?.departmentName || 'your department' }}.</p>
+        </div>
+
+        <button class="modal-close" type="button" (click)="closeInviteModal()">x</button>
+      </div>
+
+      <div class="form-group">
+        <label for="dept-admin-invite-email">Email Address</label>
+        <input
+          id="dept-admin-invite-email"
+          type="email"
+          [(ngModel)]="inviteForm.email"
+          placeholder="name@example.com" />
+      </div>
+
+      @if (inviteError) {
+        <div class="alert alert-error compact">{{ inviteError }}</div>
+      }
+
+      <div class="modal-actions">
+        <button class="btn-secondary" type="button" (click)="closeInviteModal()">Cancel</button>
+        <button class="btn-primary" type="button" (click)="sendInvite()" [disabled]="inviteLoading">
+          {{ inviteLoading ? 'Sending...' : 'Send Invitation' }}
+        </button>
+      </div>
+    </div>
+  </div>
+}

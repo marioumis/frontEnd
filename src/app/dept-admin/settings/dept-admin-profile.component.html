@@ -1,0 +1,125 @@
+<div class="page">
+  <div class="topbar">
+    <div>
+      <div class="page-eyebrow">Department Admin</div>
+      <div class="page-title">Edit <em>Profile</em></div>
+      <div class="page-sub">Manage your department-admin account details and password.</div>
+    </div>
+  </div>
+
+  <div class="settings-grid">
+    <section class="card">
+      <div class="card-header">
+        <div>
+          <h2>Profile Information</h2>
+          <p>Your login stays read-only here, matching the dept-admin backend contract.</p>
+        </div>
+      </div>
+
+      @if (profileSuccess) {
+        <div class="alert alert-success">{{ profileSuccess }}</div>
+      }
+
+      @if (profileError) {
+        <div class="alert alert-error">{{ profileError }}</div>
+      }
+
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="dept-admin-first-name">First Name</label>
+          <input
+            id="dept-admin-first-name"
+            type="text"
+            [(ngModel)]="profile.firstName"
+            placeholder="First name" />
+        </div>
+
+        <div class="form-group">
+          <label for="dept-admin-last-name">Last Name</label>
+          <input
+            id="dept-admin-last-name"
+            type="text"
+            [(ngModel)]="profile.lastName"
+            placeholder="Last name" />
+        </div>
+
+        <div class="form-group full">
+          <label for="dept-admin-email">Email Address</label>
+          <input
+            id="dept-admin-email"
+            type="email"
+            [(ngModel)]="profile.email"
+            placeholder="name@example.com" />
+        </div>
+
+        <div class="form-group">
+          <label>Username</label>
+          <input type="text" [value]="currentUser?.login || ''" readonly />
+        </div>
+
+        <div class="form-group">
+          <label>Department</label>
+          <input type="text" [value]="currentUser?.departmentName || 'No department assigned'" readonly />
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn-primary" type="button" (click)="saveProfile()" [disabled]="profileLoading">
+          {{ profileLoading ? 'Saving...' : 'Save Changes' }}
+        </button>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-header">
+        <div>
+          <h2>Change Password</h2>
+          <p>Use the department-admin password endpoint for credential updates.</p>
+        </div>
+      </div>
+
+      @if (passwordSuccess) {
+        <div class="alert alert-success">{{ passwordSuccess }}</div>
+      }
+
+      @if (passwordError) {
+        <div class="alert alert-error">{{ passwordError }}</div>
+      }
+
+      <div class="form-grid">
+        <div class="form-group full">
+          <label for="dept-admin-current-password">Current Password</label>
+          <input
+            id="dept-admin-current-password"
+            type="password"
+            [(ngModel)]="passwords.currentPassword"
+            placeholder="Current password" />
+        </div>
+
+        <div class="form-group">
+          <label for="dept-admin-new-password">New Password</label>
+          <input
+            id="dept-admin-new-password"
+            type="password"
+            [(ngModel)]="passwords.newPassword"
+            placeholder="New password" />
+        </div>
+
+        <div class="form-group">
+          <label for="dept-admin-confirm-password">Confirm Password</label>
+          <input
+            id="dept-admin-confirm-password"
+            type="password"
+            [(ngModel)]="passwords.confirmPassword"
+            placeholder="Confirm password" />
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn-primary" type="button" (click)="changePassword()" [disabled]="passwordLoading">
+          {{ passwordLoading ? 'Updating...' : 'Change Password' }}
+        </button>
+      </div>
+    </section>
+  </div>
+</div>

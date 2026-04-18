@@ -37,10 +37,9 @@ export class AdminUserService {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
   }
 
-  toggleUserStatus(id: number): Observable<any> {
-  // Use .patch because we are only changing one field (activated)
-  return this.http.patch(`http://localhost:8081/api/v1/admin/users/${id}/toggle`, {});
-}
+  toggleUserStatus(id: number): Observable<AdminUserResponse> {
+    return this.http.patch<AdminUserResponse>(`${this.apiUrl}/${id}/toggle-status`, {});
+  }
 
 // PUT: Assign DEPT_ADMIN role
 makeDeptAdmin(id: number): Observable<AdminUserResponse> {

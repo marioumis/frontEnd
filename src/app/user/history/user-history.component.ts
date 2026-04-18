@@ -1,13 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
-
-interface UserDocumentResponse {
-  id: number;
-  generatedFileName: string;
-  downloadUrl: string;
-}
+import { UserDocumentResponse } from '../../models/response/user-document-response.model';
+import { UserDocumentService } from '../../core/service/user-document.service';
 
 @Component({
   selector: 'app-user-history',
@@ -22,9 +17,7 @@ export class UserHistoryComponent implements OnInit {
   loading = false;
   errorMessage = '';
 
-  private baseUrl = 'http://localhost:8081/api/v1';
-
-  constructor(private http: HttpClient) {}
+  constructor(private userDocService: UserDocumentService) {}
 
   ngOnInit(): void {
     this.loadHistory();
@@ -32,21 +25,45 @@ export class UserHistoryComponent implements OnInit {
 
   loadHistory(): void {
     this.loading = true;
-    this.http.get<UserDocumentResponse[]>(`${this.baseUrl}/user-documents/my-documents`).subscribe({
-      next: (data) => {
-        this.documents = data;
+    this.errorMessage = '';
+    
+    this.userDocService.getMyDocuments().subscribe({
+      next: (data: any) => {
+        console.log('User history data loaded:', data);
+        // Handle direct array or Spring Page wrapper
+        this.documents = Array.isArray(data) ? data : (data.content || []);
         this.loading = false;
       },
       error: (err) => {
-        console.error('Failed to load history', err);
-        this.errorMessage = 'Failed to load your documents.';
+        console.error('Detailed History Error:', err);
+        if (err.status === 403) {
+          this.errorMessage = 'Permission Denied (403). Please check if your user has the correct roles on the backend.';
+        } else if (err.status === 0) {
+          this.errorMessage = 'Network error or CORS issue. Please check if the backend is running at http://localhost:8081';
+        } else {
+          this.errorMessage = `Failed to load documents: ${err.message || 'Unknown error'}`;
+        }
         this.loading = false;
       }
     });
   }
 
   download(fileName: string): void {
-    window.open(`${this.baseUrl}/user-documents/download/${fileName}`, '_blank');
+    this.userDocService.download(fileName).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      },
+      error: (err) => {
+        console.error('Download failed', err);
+      }
+    });
   }
 
   getDisplayName(fileName: string): string {

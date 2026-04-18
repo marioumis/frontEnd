@@ -1,0 +1,126 @@
+<div class="page">
+  <div class="topbar">
+    <div>
+      <div class="page-eyebrow">Management</div>
+      <div class="page-title">Edit <em>User</em></div>
+      <div class="page-sub">Update user details and department assignment using the admin user endpoints.</div>
+    </div>
+
+    <a class="btn-secondary" [routerLink]="['/admin/users']">Back to Users</a>
+  </div>
+
+  @if (loading) {
+    <div class="loading-card">
+      <div class="spinner"></div>
+      <span>Loading user details...</span>
+    </div>
+  }
+
+  @if (!loading) {
+    <div class="content-grid">
+      <section class="summary-card">
+        <div class="summary-avatar">
+          {{ (user?.firstName?.slice(0, 1) ?? '') + (user?.lastName?.slice(0, 1) ?? '') }}
+        </div>
+
+        <h2>{{ user?.firstName }} {{ user?.lastName }}</h2>
+        <p>{{ user?.email }}</p>
+
+        <div class="summary-badges">
+          <span class="badge badge-role">{{ primaryRole }}</span>
+          <span class="badge" [class.badge-active]="user?.activated" [class.badge-inactive]="!user?.activated">
+            {{ user?.activated ? 'Active' : 'Inactive' }}
+          </span>
+        </div>
+
+        <div class="summary-meta">
+          <div>
+            <span class="meta-label">Username</span>
+            <strong>{{ user?.login || 'Not set' }}</strong>
+          </div>
+          <div>
+            <span class="meta-label">Department</span>
+            <strong>{{ user?.departmentName || 'Unassigned' }}</strong>
+          </div>
+        </div>
+
+        @if (canMakeDeptAdmin) {
+          <button class="btn-outline" type="button" (click)="makeDeptAdmin()" [disabled]="promoting">
+            {{ promoting ? 'Promoting...' : 'Make Department Admin' }}
+          </button>
+        }
+      </section>
+
+      <section class="form-card">
+        @if (successMessage) {
+          <div class="alert alert-success">{{ successMessage }}</div>
+        }
+
+        @if (errorMessage) {
+          <div class="alert alert-error">{{ errorMessage }}</div>
+        }
+
+        <form class="edit-form" (ngSubmit)="onSave()">
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="edit-user-first-name">First Name</label>
+              <input
+                id="edit-user-first-name"
+                type="text"
+                name="firstName"
+                [(ngModel)]="userRequest.firstName"
+                placeholder="First name" />
+            </div>
+
+            <div class="form-group">
+              <label for="edit-user-last-name">Last Name</label>
+              <input
+                id="edit-user-last-name"
+                type="text"
+                name="lastName"
+                [(ngModel)]="userRequest.lastName"
+                placeholder="Last name" />
+            </div>
+
+            <div class="form-group full">
+              <label for="edit-user-email">Email Address</label>
+              <input
+                id="edit-user-email"
+                type="email"
+                name="email"
+                [(ngModel)]="userRequest.email"
+                placeholder="name@example.com" />
+            </div>
+
+            <div class="form-group full">
+              <label for="edit-user-login">Username</label>
+              <input
+                id="edit-user-login"
+                type="text"
+                name="login"
+                [(ngModel)]="userRequest.login"
+                placeholder="username" />
+            </div>
+
+            <div class="form-group full">
+              <label for="edit-user-department">Department</label>
+              <select id="edit-user-department" name="departmentId" [(ngModel)]="userRequest.departmentId">
+                <option [ngValue]="null">No department</option>
+                @for (department of departments; track department.idDep) {
+                  <option [ngValue]="department.idDep">{{ department.nomDep }}</option>
+                }
+              </select>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button class="btn-secondary" type="button" [routerLink]="['/admin/users']">Cancel</button>
+            <button class="btn-primary" type="submit" [disabled]="saving">
+              {{ saving ? 'Saving...' : 'Save Changes' }}
+            </button>
+          </div>
+        </form>
+      </section>
+    </div>
+  }
+</div>

@@ -81,6 +81,7 @@
         <tr>
           <th>ID</th>
           <th>Name</th>
+          <th>Manager / Admin</th>
           <th>Description</th>
           <th class="th-actions">Actions</th>
         </tr>
@@ -90,6 +91,11 @@
         <tr *ngFor="let department of departments">
           <td>{{ department.idDep }}</td>
           <td>{{ department.nomDep }}</td>
+          <td>
+            <span class="admin-chip">
+              {{ department.deptAdminName }}
+            </span>
+          </td>
           <td>{{ department.description || '—' }}</td>
 
           <td>

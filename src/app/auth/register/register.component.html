@@ -15,7 +15,7 @@
         </div>
 
         <div class="left-sub">
-          Create your account and start managing templates and generating professional documents in seconds.
+          Complete your invitation and access your Templora workspace.
         </div>
       </div>
 
@@ -40,15 +40,15 @@
 
   <div class="right">
 
-    <div class="page-eyebrow">Get started</div>
+    <div class="page-eyebrow">Welcome</div>
 
     <div class="page-title">
-      Create your<br>
+      Complete your<br>
       <em>Templora account</em>
     </div>
 
     <div class="page-sub">
-      Fill in your details to access your workspace
+      Fill in your details to activate your account
     </div>
 
     <div class="success-box" *ngIf="successMessage">
@@ -86,7 +86,7 @@
 
       <div class="field">
         <label>Email</label>
-        <input formControlName="email" type="email" placeholder="you@example.com" />
+        <input formControlName="email" type="email" placeholder="you@example.com" [readonly]="isInvitationMode" />
         <span class="error" *ngIf="email?.invalid && email?.touched">
           Please enter a valid email
         </span>
@@ -113,7 +113,7 @@
       </div>
 
       <button type="submit" class="btn" [disabled]="isLoading">
-        {{ isLoading ? 'Creating account...' : 'Create account →' }}
+        {{ isLoading ? 'Activating account...' : 'Activate account →' }}
       </button>
 
     </form>

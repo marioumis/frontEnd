@@ -10,7 +10,7 @@
   padding: 32px;
 }
 
-/* ─── HEADER ─── */
+/* â”€â”€â”€ HEADER â”€â”€â”€ */
 .page-header {
   margin-bottom: 28px;
 }
@@ -41,7 +41,7 @@
   margin-top: 4px;
 }
 
-/* ─── FORM CARD ─── */
+/* â”€â”€â”€ FORM CARD â”€â”€â”€ */
 .form {
   background: #ffffff;
   padding: 24px;
@@ -54,7 +54,7 @@
   box-shadow: 0 6px 18px rgba(0,0,0,0.04);
 }
 
-/* ─── FIELDS ─── */
+/* â”€â”€â”€ FIELDS â”€â”€â”€ */
 .field {
   display: flex;
   flex-direction: column;
@@ -87,7 +87,7 @@
   box-shadow: 0 0 0 3px rgba(96,165,250,0.2);
 }
 
-/* ─── BUTTONS ─── */
+/* â”€â”€â”€ BUTTONS â”€â”€â”€ */
 .actions-row {
   display: flex;
   gap: 10px;
@@ -120,7 +120,7 @@
   box-shadow: none;
 }
 
-/* ─── TABLE CARD ─── */
+/* â”€â”€â”€ TABLE CARD â”€â”€â”€ */
 .table-card {
   background: white;
   border-radius: 16px;
@@ -129,7 +129,7 @@
   box-shadow: 0 8px 24px rgba(0,0,0,0.05);
 }
 
-/* ─── TABLE HEADER ─── */
+/* â”€â”€â”€ TABLE HEADER â”€â”€â”€ */
 .table-header {
   padding: 18px 20px;
   border-bottom: 1px solid #e5e7eb;
@@ -140,7 +140,7 @@
   font-weight: 700;
 }
 
-/* ─── TABLE ─── */
+/* â”€â”€â”€ TABLE â”€â”€â”€ */
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -167,7 +167,7 @@
   background: #f8fbff;
 }
 
-/* ─── ACTION BUTTONS ─── */
+/* â”€â”€â”€ ACTION BUTTONS â”€â”€â”€ */
 .table button {
   border: none;
   padding: 6px 10px;
@@ -195,14 +195,14 @@
   background: #fee2e2;
 }
 
-/* ─── EMPTY ─── */
+/* â”€â”€â”€ EMPTY â”€â”€â”€ */
 .empty {
   text-align: center;
   padding: 24px;
   color: #9ca3af;
 }
 
-/* ─── ALERTS ─── */
+/* â”€â”€â”€ ALERTS â”€â”€â”€ */
 .error-box {
   background: #fef2f2;
   border: 1px solid #fecaca;

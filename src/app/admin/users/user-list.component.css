@@ -10,7 +10,7 @@
   padding: 32px;
 }
 
-/* ── Topbar ── */
+/* â”€â”€ Topbar â”€â”€ */
 .topbar {
   display: flex;
   align-items: center;
@@ -42,7 +42,7 @@
   color: var(--blue-600);
 }
 
-/* ── Search ── */
+/* â”€â”€ Search â”€â”€ */
 .search-wrap {
   display: flex;
   align-items: center;
@@ -75,7 +75,7 @@
   color: var(--gray-400);
 }
 
-/* ── Table Wrapper ── */
+/* â”€â”€ Table Wrapper â”€â”€ */
 .table-wrap {
   background: var(--white);
   border: 1px solid var(--border);
@@ -84,7 +84,7 @@
   box-shadow: var(--shadow-md);
 }
 
-/* ── Loading ── */
+/* â”€â”€ Loading â”€â”€ */
 .loading {
   display: flex;
   align-items: center;
@@ -108,7 +108,7 @@
   to { transform: rotate(360deg); }
 }
 
-/* ── Table ── */
+/* â”€â”€ Table â”€â”€ */
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -149,7 +149,7 @@
   border-bottom: none;
 }
 
-/* ── User Cell ── */
+/* â”€â”€ User Cell â”€â”€ */
 .user-cell {
   display: flex;
   align-items: center;
@@ -194,7 +194,7 @@
   color: var(--gray-400);
 }
 
-/* ── Badges ── */
+/* â”€â”€ Badges â”€â”€ */
 .badge {
   display: inline-flex;
   align-items: center;
@@ -230,7 +230,7 @@
   border-color: var(--error-border);
 }
 
-/* ── Actions ── */
+/* â”€â”€ Actions â”€â”€ */
 .actions {
   display: flex;
   align-items: center;
@@ -268,11 +268,23 @@
   border-color: var(--error-border);
 }
 
+.act-toggle-off:hover {
+  background: var(--error-bg);
+  color: var(--error-text);
+  border-color: var(--error-border);
+}
+
+.act-toggle-on:hover {
+  background: var(--success-bg);
+  color: var(--success-text);
+  border-color: var(--success-border);
+}
+
 .th-actions {
   width: 110px;
 }
 
-/* ── Empty row ── */
+/* â”€â”€ Empty row â”€â”€ */
 .empty {
   text-align: center;
   padding: 32px !important;
@@ -285,7 +297,7 @@
   font-size: 13px;
 }
 
-/* ── Responsive ── */
+/* â”€â”€ Responsive â”€â”€ */
 @media (max-width: 992px) {
   .page {
     padding: 20px;
@@ -318,7 +330,7 @@
     padding: 16px;
   }
 }
-/* ── Topbar right group ── */
+/* â”€â”€ Topbar right group â”€â”€ */
 .topbar-right {
   display: flex;
   align-items: center;
@@ -326,7 +338,7 @@
   flex-wrap: wrap;
 }
 
-/* ── Invite button ── */
+/* â”€â”€ Invite button â”€â”€ */
 .btn-invite {
   display: inline-flex;
   align-items: center;
@@ -348,7 +360,7 @@
   box-shadow: 0 6px 18px rgba(37, 99, 235, 0.28);
 }
 
-/* ── Modal overlay ── */
+/* â”€â”€ Modal overlay â”€â”€ */
 .modal-overlay {
   position: fixed;
   inset: 0;

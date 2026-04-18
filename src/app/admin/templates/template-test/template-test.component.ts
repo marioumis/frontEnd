@@ -4,11 +4,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { finalize } from 'rxjs/operators';
-import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { DomSanitizer, SafeHtml, SafeResourceUrl } from '@angular/platform-browser';
 
 import { DynamicDocumentService } from '../../../core/service/dynamic-document.service';
 import { DynamicFieldsService } from '../../../core/service/dynamic-fields.service';
 import { AuthService } from '../../../core/service/auth.service';
+import { UserDocumentService } from '../../../core/service/user-document.service';
 import { DynamicDocumentResponse } from '../../../models/response/DynamicDocumentResponse';
 import { DynamicFieldResponse } from '../../../models/response/DynamicFieldResponse';
 import { CurrentUserResponse } from '../../../models/response/current-user-response.model';
@@ -41,7 +42,7 @@ export class TemplateTestComponent implements OnInit {
   generating = false;
 
   templatePreviewHtml: SafeHtml | null = null;
-  generatedPreviewHtml: SafeHtml | null = null;
+  generatedPreviewUrl: SafeResourceUrl | null = null;
   previewMode: 'template' | 'generated' = 'template';
   generatedFileName: string | null = null;
 
@@ -55,6 +56,7 @@ export class TemplateTestComponent implements OnInit {
     private docService: DynamicDocumentService,
     private fieldsService: DynamicFieldsService,
     private authService: AuthService,
+    private userDocService: UserDocumentService,
     private http: HttpClient,
     private sanitizer: DomSanitizer
   ) {}
@@ -169,31 +171,23 @@ export class TemplateTestComponent implements OnInit {
       }))
     };
 
-    this.http.post<any>(
-      'http://localhost:8081/api/v1/user-documents/generate',
-      request
-    ).pipe(finalize(() => this.generating = false))
-     .subscribe({
-       next: result => {
-         this.generatedFileName = result.generatedFileName;
-         this.loadGeneratedPreview(result.generatedFileName);
-         this.showNotice('Document generated! ✅');
-       },
-       error: () => this.showNotice('Generation failed.', 'error')
-     });
+    this.userDocService.generate(request)
+      .pipe(finalize(() => this.generating = false))
+      .subscribe({
+        next: result => {
+          this.generatedFileName = result.generatedFileName;
+          this.loadGeneratedPreview(result.generatedFileName);
+          this.showNotice('Document generated! ✅');
+        },
+        error: () => this.showNotice('Generation failed.', 'error')
+      });
   }
 
   loadGeneratedPreview(fileName: string): void {
-    this.http.get(
-      `http://localhost:8081/api/v1/user-documents/download/${fileName}`,
-      { responseType: 'blob' }
-    ).subscribe({
-      next: async (blob: Blob) => {
-        const mammoth = await import('mammoth');
-        const arrayBuffer = await blob.arrayBuffer();
-        const result = await mammoth.convertToHtml({ arrayBuffer });
-        this.generatedPreviewHtml = this.sanitizer
-          .bypassSecurityTrustHtml(result.value);
+    this.userDocService.download(fileName).subscribe({
+      next: (blob: Blob) => {
+        const url = window.URL.createObjectURL(blob);
+        this.generatedPreviewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
         this.previewMode = 'generated';
       },
       error: () => this.showNotice('Could not load preview.', 'error')
@@ -202,15 +196,24 @@ export class TemplateTestComponent implements OnInit {
 
   download(): void {
     if (!this.generatedFileName) return;
-    window.open(
-      `http://localhost:8081/api/v1/user-documents/download/${this.generatedFileName}`,
-      '_blank'
-    );
+    this.userDocService.download(this.generatedFileName).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = this.generatedFileName!;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+      },
+      error: (err) => this.showNotice('Download failed.', 'error')
+    });
   }
 
   switchToTemplate(): void { this.previewMode = 'template'; }
   switchToGenerated(): void {
-    if (this.generatedPreviewHtml) this.previewMode = 'generated';
+    if (this.generatedPreviewUrl) this.previewMode = 'generated';
   }
 
   goBack(): void {

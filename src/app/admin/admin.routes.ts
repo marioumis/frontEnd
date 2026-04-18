@@ -17,11 +17,17 @@ export const adminRoutes: Routes = [
       {
         path: 'users',
         loadComponent: () =>
-          import('./users/user-list.component').then(m => m.UserListComponent)
+          import('./users/admin-user-list-page.component').then(m => m.AdminUserListPageComponent)
       },
       {
         path: 'users/edit/:id', 
-        loadComponent: () => import('./user-edit/user-edit').then(m => m.UserEditComponent)
+        loadComponent: () =>
+          import('./user-edit/admin-user-edit-page.component').then(m => m.AdminUserEditPageComponent)
+      },
+      {
+        path: 'invitations',
+        loadComponent: () =>
+          import('./invitations/admin-invitation-page.component').then(m => m.AdminInvitationPageComponent)
       },
       {
         path: 'departments',
@@ -31,7 +37,7 @@ export const adminRoutes: Routes = [
   {
   path: 'categories',
   loadComponent: () =>
-    import('./categories/type-document.component').then(m => m.CategoryComponent)
+    import('./categories/admin-category-page.component').then(m => m.AdminCategoryPageComponent)
 },
  {
       path: 'templates',
@@ -53,7 +59,7 @@ export const adminRoutes: Routes = [
   {
     path: 'settings',
     loadComponent: () =>
-      import('../user/settings/user-settings.component').then(m => m.UserSettingsComponent)
+      import('./settings/admin-profile.component').then(m => m.AdminProfileComponent)
   }
       /*{
         path: 'templates',

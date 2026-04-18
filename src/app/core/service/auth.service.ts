@@ -31,7 +31,7 @@ export class AuthService {
   }
 
   getCurrentUser(): Observable<CurrentUserResponse> {
-  // cache it — don't fetch every time
+  // cache it â€” don't fetch every time
   if (this.currentUser) {
     return of(this.currentUser);
   }
@@ -45,7 +45,7 @@ export class AuthService {
 logout() {
   localStorage.removeItem('jwt');
   localStorage.removeItem('role');
-  this.currentUser = null; // ← add this
+  this.currentUser = null; // â† add this
   this.router.navigate(['/login']);
 }
 
