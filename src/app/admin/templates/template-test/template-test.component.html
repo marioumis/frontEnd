@@ -84,17 +84,10 @@
           {{ state.field.description }}
         </small>
 
-        <!-- Source dropdown -->
+        <!-- Source + value area -->
         <div style="display:flex; gap:8px; align-items:flex-start; flex-wrap:wrap">
 
-          <select class="source-select"
-                  [(ngModel)]="state.source"
-                  (ngModelChange)="onSourceChange(state)">
-            <option value="MANUAL">✏️ Manual</option>
-            <option value="SYSTEM">⚙️ System</option>
-          </select>
-
-          <!-- MANUAL: input -->
+          <!-- MANUAL: editable input -->
           <input *ngIf="state.source === 'MANUAL'"
                  [(ngModel)]="state.manualValue"
                  [placeholder]="'Enter ' + state.field.keyName"
@@ -104,22 +97,15 @@
                  [class.field-warning]="validationResult?.notInFile
                    ?.includes(state.field.keyName)">
 
-          <!-- SYSTEM: sub-dropdown + preview -->
+          <!-- SYSTEM: read-only locked display -->
           <div *ngIf="state.source === 'SYSTEM'"
-               style="display:flex; flex-direction:column; gap:6px; flex:1">
-            <select class="field-input"
-                    [(ngModel)]="state.systemKey"
-                    (ngModelChange)="onSystemKeyChange(state)">
-              <option *ngFor="let sv of systemValues" [value]="sv.key">
-                {{ sv.label }}
-              </option>
-            </select>
-            <!-- Resolved value preview -->
-            <div class="resolved-preview">
-              <span style="color:#6b7280; font-size:11px">Will use: </span>
+               style="flex:1; display:flex; flex-direction:column; gap:4px">
+            <div class="resolved-preview system-locked">
+              <span style="color:#6b7280; font-size:11px">⚙️ Auto-filled:</span>
               <strong style="color:#059669; font-size:13px">
                 {{ state.resolvedValue || '—' }}
               </strong>
+              <span style="margin-left:auto; color:#9ca3af; font-size:11px">🔒 locked</span>
             </div>
           </div>
 

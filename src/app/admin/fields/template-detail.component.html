@@ -122,6 +122,33 @@
           </div>
 
           <div class="field">
+            <label>Source *
+              <small style="color:#6b7280">(who fills this field?)</small>
+            </label>
+            <select formControlName="source">
+              <option value="MANUAL">✏️ Manual — user fills it</option>
+              <option value="SYSTEM">⚙️ System — auto-filled</option>
+            </select>
+          </div>
+
+          <div class="field" *ngIf="fieldForm.get('source')?.value === 'SYSTEM'">
+            <label>System Value *</label>
+            <select formControlName="systemKey">
+              <option *ngFor="let sv of systemValues" [value]="sv.key">
+                {{ sv.label }}
+              </option>
+            </select>
+            <small style="color:#059669; margin-top:4px; display:block">
+              <ng-container *ngIf="fieldForm.get('systemKey')?.value">
+                Will resolve to: <strong>{{ getSystemLabel(fieldForm.get('systemKey')?.value) }}</strong>
+              </ng-container>
+              <ng-container *ngIf="!fieldForm.get('systemKey')?.value">
+                Pick a system value above.
+              </ng-container>
+            </small>
+          </div>
+
+          <div class="field">
             <label>Description <small style="color:#6b7280">(hint for user)</small></label>
             <input formControlName="description"
                    placeholder="Ex: Enter the client's full name">
@@ -177,6 +204,17 @@
         </div>
         <div class="field-item-right">
           <span class="badge field-type-badge">{{ field.type }}</span>
+          <!-- Source badge -->
+          <span *ngIf="field.source === 'SYSTEM'"
+                class="badge"
+                style="background:#dbeafe; color:#2563eb; font-size:11px">
+            ⚙️ {{ getSystemLabel(field.systemKey) || 'System' }}
+          </span>
+          <span *ngIf="field.source !== 'SYSTEM'"
+                class="badge"
+                style="background:#f3f4f6; color:#374151; font-size:11px">
+            ✏️ Manual
+          </span>
           <!-- ✅ warn if this field is not in the Word file -->
           <span *ngIf="validationResult?.notInFile?.includes(field.keyName)"
                 title="Not found in Word file"

@@ -48,13 +48,13 @@ export class UserHistoryComponent implements OnInit {
     });
   }
 
-  download(fileName: string): void {
-    this.userDocService.download(fileName).subscribe({
+  download(id: number, fileName: string): void {
+    this.userDocService.downloadPdf(id).subscribe({
       next: (blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = fileName;
+        a.download = fileName.replace(/\.docx?$/i, '.pdf');
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);

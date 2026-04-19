@@ -45,6 +45,7 @@ export class TemplateTestComponent implements OnInit {
   generatedPreviewUrl: SafeResourceUrl | null = null;
   previewMode: 'template' | 'generated' = 'template';
   generatedFileName: string | null = null;
+  generatedDocId: number | null = null;
 
   validationResult: any = null;
 
@@ -96,13 +97,20 @@ export class TemplateTestComponent implements OnInit {
   loadFields(id: number): void {
     this.fieldsService.findByDocument(id).subscribe({
       next: fields => {
-        this.fieldStates = fields.map(f => ({
-          field: f,
-          source: 'MANUAL',
-          manualValue: '',
-          systemKey: 'TODAY_DATE',
-          resolvedValue: ''
-        }));
+        this.fieldStates = fields.map(f => {
+          const state: FieldState = {
+            field: f,
+            source: f.source ?? 'MANUAL',
+            manualValue: '',
+            systemKey: f.systemKey ?? 'TODAY_DATE',
+            resolvedValue: ''
+          };
+          // Immediately resolve system values so users see them on load
+          if (state.source === 'SYSTEM') {
+            this.resolveSystemValue(state);
+          }
+          return state;
+        });
       },
       error: () => this.showNotice('Could not load fields.', 'error')
     });
@@ -162,6 +170,8 @@ export class TemplateTestComponent implements OnInit {
   generate(): void {
     if (!this.template) return;
     this.generating = true;
+    this.previewMode = 'generated';
+    this.generatedPreviewUrl = null;
 
     const request = {
       documentId: this.template.docId,
@@ -176,15 +186,16 @@ export class TemplateTestComponent implements OnInit {
       .subscribe({
         next: result => {
           this.generatedFileName = result.generatedFileName;
-          this.loadGeneratedPreview(result.generatedFileName);
+          this.generatedDocId = result.id;
+          this.loadGeneratedPreview(result.id);
           this.showNotice('Document generated! ✅');
         },
         error: () => this.showNotice('Generation failed.', 'error')
       });
   }
 
-  loadGeneratedPreview(fileName: string): void {
-    this.userDocService.download(fileName).subscribe({
+  loadGeneratedPreview(id: number): void {
+    this.userDocService.downloadPdf(id).subscribe({
       next: (blob: Blob) => {
         const url = window.URL.createObjectURL(blob);
         this.generatedPreviewUrl = this.sanitizer.bypassSecurityTrustResourceUrl(url);
@@ -195,13 +206,14 @@ export class TemplateTestComponent implements OnInit {
   }
 
   download(): void {
-    if (!this.generatedFileName) return;
-    this.userDocService.download(this.generatedFileName).subscribe({
+    if (!this.generatedDocId) return;
+    this.userDocService.downloadPdf(this.generatedDocId).subscribe({
       next: (blob) => {
         const url = window.URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = this.generatedFileName!;
+        const fn = this.generatedFileName || 'document.pdf';
+        a.download = fn.replace(/\.docx?$/i, '.pdf');
         document.body.appendChild(a);
         a.click();
         window.URL.revokeObjectURL(url);
@@ -217,13 +229,15 @@ export class TemplateTestComponent implements OnInit {
   }
 
   goBack(): void {
-  const currentUrl = this.router.url;
-  if (currentUrl.startsWith('/user')) {
-    this.router.navigate(['/user/home']);
-  } else {
-    this.router.navigate(['/admin/templates', this.template?.docId]);
+    const currentUrl = this.router.url;
+    if (currentUrl.startsWith('/user')) {
+      this.router.navigate(['/user/home']);
+    } else if (currentUrl.startsWith('/dept-admin')) {
+      this.router.navigate(['/dept-admin/templates']);
+    } else {
+      this.router.navigate(['/admin/templates', this.template?.docId]);
+    }
   }
-}
 
   get hasWarnings(): boolean {
     return !!(

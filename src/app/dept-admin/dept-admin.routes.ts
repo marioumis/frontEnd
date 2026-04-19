@@ -35,6 +35,16 @@ export const deptAdminRoutes: Routes = [
           import('./templates/dept-admin-template-page.component').then(m => m.DeptAdminTemplatePageComponent)
       },
       {
+        path: 'templates/:id',
+        loadComponent: () =>
+          import('../admin/fields/template-detail.component').then(m => m.TemplateDetailComponent)
+      },
+      {
+        path: 'templates/:id/test',
+        loadComponent: () =>
+          import('../admin/templates/template-test/template-test.component').then(m => m.TemplateTestComponent)
+      },
+      {
         path: 'settings',
         loadComponent: () =>
           import('./settings/dept-admin-profile.component').then(m => m.DeptAdminProfileComponent)

@@ -24,4 +24,10 @@ export class UserDocumentService {
       responseType: 'blob'
     });
   }
+
+  downloadPdf(id: number): Observable<Blob> {
+    return this.http.get(`${this.apiUrl}/${id}/pdf`, {
+      responseType: 'blob'
+    });
+  }
 }

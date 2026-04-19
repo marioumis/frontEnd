@@ -10,6 +10,7 @@ import { DynamicDocumentService } from '../../core/service/dynamic-document.serv
 import { DynamicFieldsService } from '../../core/service/dynamic-fields.service';
 import { DynamicDocumentResponse } from '../../models/response/DynamicDocumentResponse';
 import { DynamicFieldResponse } from '../../models/response/DynamicFieldResponse';
+import { SYSTEM_VALUES, SystemValueOption } from '../../core/constants/system-values';
 
 type FieldMode = 'create' | 'edit' | null;
 
@@ -39,6 +40,7 @@ export class TemplateDetailComponent implements OnInit {
 
   fieldTypes: ('TEXT' | 'NUMBER' | 'DATE')[] = ['TEXT', 'NUMBER', 'DATE'];
   previewHtml: string = '';
+  systemValues = SYSTEM_VALUES;
 
   // ✅ ADD THIS
   validationResult: {
@@ -71,7 +73,9 @@ export class TemplateDetailComponent implements OnInit {
     this.fieldForm = this.fb.group({
       keyName:     ['', [Validators.required, Validators.maxLength(100)]],
       type:        ['TEXT', Validators.required],
-      description: ['']
+      description: [''],
+      source:      ['MANUAL', Validators.required],
+      systemKey:   [null]
     });
   }
 
@@ -123,7 +127,11 @@ export class TemplateDetailComponent implements OnInit {
   }
 
   goToTest(): void {
-    this.router.navigate(['/admin/templates', this.template!.docId, 'test']);
+    if (this.router.url.startsWith('/dept-admin')) {
+      this.router.navigate(['/dept-admin/templates', this.template!.docId, 'test']);
+    } else {
+      this.router.navigate(['/admin/templates', this.template!.docId, 'test']);
+    }
   }
 
   openCreateField(): void {
@@ -138,14 +146,16 @@ export class TemplateDetailComponent implements OnInit {
     this.fieldForm.patchValue({
       keyName:     field.keyName,
       type:        field.type,
-      description: field.description ?? ''
+      description: field.description ?? '',
+      source:      field.source ?? 'MANUAL',
+      systemKey:   field.systemKey ?? null
     });
   }
 
   cancelFieldForm(): void {
     this.fieldMode = null;
     this.selectedField = null;
-    this.fieldForm.reset({ type: 'TEXT' });
+    this.fieldForm.reset({ type: 'TEXT', source: 'MANUAL', systemKey: null });
   }
 
   submitField(): void {
@@ -163,7 +173,9 @@ export class TemplateDetailComponent implements OnInit {
         docId,
         keyName:     val.keyName,
         type:        val.type,
-        description: val.description || null
+        description: val.description || null,
+        source:      val.source || 'MANUAL',
+        systemKey:   val.source === 'SYSTEM' ? (val.systemKey || null) : null
       }).pipe(finalize(() => this.submitting = false))
         .subscribe({
           next: field => {
@@ -179,7 +191,9 @@ export class TemplateDetailComponent implements OnInit {
       this.fieldsService.update(this.selectedField.fieldId, {
         keyName:     val.keyName,
         type:        val.type,
-        description: val.description || null
+        description: val.description || null,
+        source:      val.source || 'MANUAL',
+        systemKey:   val.source === 'SYSTEM' ? (val.systemKey || null) : null
       }).pipe(finalize(() => this.submitting = false))
         .subscribe({
           next: updated => {
@@ -218,12 +232,21 @@ export class TemplateDetailComponent implements OnInit {
   }
 
   goBack(): void {
-    this.router.navigate(['/admin/templates']);
+    if (this.router.url.startsWith('/dept-admin')) {
+      this.router.navigate(['/dept-admin/templates']);
+    } else {
+      this.router.navigate(['/admin/templates']);
+    }
   }
 
   isInvalid(name: string): boolean {
     const c = this.fieldForm.get(name);
     return !!(c && c.invalid && c.touched);
+  }
+
+  getSystemLabel(key: string | null | undefined): string {
+    if (!key) return '';
+    return this.systemValues.find(s => s.key === key)?.label ?? key;
   }
 
   private showNotice(msg: string, type: 'success' | 'error' = 'success'): void {

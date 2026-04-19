@@ -127,6 +127,15 @@ export class AdminInvitationPageComponent implements OnInit {
       return;
     }
 
+    // Block invitation if the selected department already has a DEPT_ADMIN
+    if (this.inviteForm.roleName === 'DEPT_ADMIN' && this.inviteForm.departmentId) {
+      const selected = this.departments.find(d => d.idDep === this.inviteForm.departmentId);
+      if (selected?.deptAdminName) {
+        this.inviteError = `This department already has a Department Admin (${selected.deptAdminName}). Remove or reassign them first.`;
+        return;
+      }
+    }
+
     const payload: InviteUserRequest = {
       email: this.inviteForm.email.trim(),
       roleName: this.inviteForm.roleName,

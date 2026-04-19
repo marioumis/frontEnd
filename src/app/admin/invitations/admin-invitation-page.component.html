@@ -184,9 +184,24 @@
           <select id="invitation-department" [(ngModel)]="inviteForm.departmentId">
             <option [ngValue]="null">Select department</option>
             @for (department of departments; track department.idDep) {
-              <option [ngValue]="department.idDep">{{ department.nomDep }}</option>
+              <option
+                [ngValue]="department.idDep"
+                [disabled]="inviteForm.roleName === 'DEPT_ADMIN' && !!department.deptAdminName">
+                {{ department.nomDep }}
+                @if (inviteForm.roleName === 'DEPT_ADMIN' && department.deptAdminName) {
+                  — managed by {{ department.deptAdminName }}
+                }
+              </option>
             }
           </select>
+          <!-- Warning shown inline when a taken dept is somehow selected -->
+          @for (dept of departments; track dept.idDep) {
+            @if (dept.idDep === inviteForm.departmentId && inviteForm.roleName === 'DEPT_ADMIN' && dept.deptAdminName) {
+              <small class="dept-taken-warning" style="color:#d97706; display:block; margin-top:4px;">
+                ⚠️ Already managed by <strong>{{ dept.deptAdminName }}</strong>. Remove them first.
+              </small>
+            }
+          }
         </div>
       }
 

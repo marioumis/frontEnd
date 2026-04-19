@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { FormsModule, ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { finalize } from 'rxjs/operators';
 import { DeptAdminService } from '../../core/service/dept-admin.service';
@@ -38,7 +39,8 @@ export class DeptAdminTemplatePageComponent implements OnInit {
 
   constructor(
     private readonly deptAdminService: DeptAdminService,
-    private readonly formBuilder: FormBuilder
+    private readonly formBuilder: FormBuilder,
+    private readonly router: Router
   ) {}
 
   ngOnInit(): void {
@@ -223,6 +225,14 @@ export class DeptAdminTemplatePageComponent implements OnInit {
   cancelDelete(): void {
     this.confirmOpen = false;
     this.deleteTargetId = null;
+  }
+
+  openTest(document: DynamicDocumentResponse): void {
+    this.router.navigate(['/dept-admin/templates', document.docId, 'test']);
+  }
+
+  openFields(document: DynamicDocumentResponse): void {
+    this.router.navigate(['/dept-admin/templates', document.docId]);
   }
 
   fieldCount(document: DynamicDocumentResponse): number {
