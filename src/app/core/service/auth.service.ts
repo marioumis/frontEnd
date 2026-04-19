@@ -30,6 +30,14 @@ export class AuthService {
     return this.http.post<string>(`${this.apiUrl}/register`, request , { responseType: 'text' as 'json' });
   }
 
+  requestPasswordReset(email: string) {
+    return this.http.post<void>(`${this.apiUrl}/begin-reset-password`, { email });
+  }
+
+  finishPasswordReset(resetPassWord: any) {
+    return this.http.post<string>(`${this.apiUrl}/end-reset-password`, resetPassWord, { responseType: 'text' as 'json' });
+  }
+
   getCurrentUser(): Observable<CurrentUserResponse> {
   // cache it â€” don't fetch every time
   if (this.currentUser) {
