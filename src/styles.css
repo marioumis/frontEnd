@@ -2,8 +2,8 @@
    TEMPLORA — Global Design System
    Palette: Blue & White
    ═══════════════════════════════════════════════ */
-
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import '@angular/material/prebuilt-themes/indigo-pink.css';
 
 /* ── Design Tokens ── */
 :root {

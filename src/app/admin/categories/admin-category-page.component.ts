@@ -5,6 +5,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { TypeDocumentService } from '../../core/service/type-document.service';
 import { TypeDocumentRequest } from '../../models/request/type-document-request.model';
 import { TypeDocumentResponse } from '../../models/response/type-document-response.model';
+import { DepartmentService } from '../../core/service/department.service';
+import { DepartmentResponse } from '../../models/response/department-response.model';
 
 interface AdminCategoryView extends TypeDocumentResponse {
   departmentId?: number | null;
@@ -20,14 +22,17 @@ interface AdminCategoryView extends TypeDocumentResponse {
 })
 export class AdminCategoryPageComponent implements OnInit {
   categoryForm!: FormGroup;
-
   categories: AdminCategoryView[] = [];
   filteredCategories: AdminCategoryView[] = [];
+  departments: DepartmentResponse[] = [];
 
   searchTerm = '';
   selectedCategoryId: number | null = null;
+  
+  showModal = false;
   isEditMode = false;
   loading = false;
+  loadingDepartments = false;
   saving = false;
   showDepartmentColumn = false;
   errorMessage = '';
@@ -35,15 +40,16 @@ export class AdminCategoryPageComponent implements OnInit {
 
   constructor(
     private readonly typeDocumentService: TypeDocumentService,
-    private readonly formBuilder: FormBuilder
+    private readonly formBuilder: FormBuilder,
+    private departmentService: DepartmentService
   ) {}
 
   ngOnInit(): void {
     this.categoryForm = this.formBuilder.group({
       nameType: ['', [Validators.required, Validators.maxLength(100)]],
-      description: ['', [Validators.maxLength(255)]]
+      description: ['', [Validators.maxLength(255)]],
+      departmentId: [null]
     });
-
     this.loadCategories();
   }
 
@@ -79,6 +85,46 @@ export class AdminCategoryPageComponent implements OnInit {
     );
   }
 
+  loadDepartments(): void {
+    this.loadingDepartments = true;
+    this.departmentService.getDepartments().subscribe({
+      next: (res) => {
+        this.departments = res;
+        this.loadingDepartments = false;
+      },
+      error: () => {
+        this.loadingDepartments = false;
+      }
+    });
+  }
+
+  openModal(category?: AdminCategoryView): void {
+    this.errorMessage = '';
+    this.successMessage = '';
+    this.showModal = true;
+    this.isEditMode = !!category;
+    this.selectedCategoryId = category ? category.idType : null;
+
+    if (this.departments.length === 0) {
+      this.loadDepartments();
+    }
+
+    if (category) {
+      this.categoryForm.patchValue({
+        nameType: category.nameType,
+        description: category.description ?? '',
+        departmentId: category.departmentId || null
+      });
+    } else {
+      this.resetForm();
+    }
+  }
+
+  closeModal(): void {
+    this.showModal = false;
+    this.resetForm();
+  }
+
   onSubmit(): void {
     this.errorMessage = '';
     this.successMessage = '';
@@ -92,7 +138,8 @@ export class AdminCategoryPageComponent implements OnInit {
 
     const payload: TypeDocumentRequest = {
       nameType: this.nameType?.value.trim() ?? '',
-      description: this.description?.value?.trim() ?? ''
+      description: this.description?.value?.trim() ?? '',
+      departmentId: this.departmentId?.value || null
     };
 
     const request$ = this.isEditMode && this.selectedCategoryId !== null
@@ -105,7 +152,7 @@ export class AdminCategoryPageComponent implements OnInit {
         this.successMessage = this.isEditMode
           ? 'Category updated successfully.'
           : 'Category created successfully.';
-        this.resetForm();
+        this.closeModal();
         this.loadCategories();
       },
       error: (err) => {
@@ -119,15 +166,7 @@ export class AdminCategoryPageComponent implements OnInit {
   }
 
   onEdit(category: AdminCategoryView): void {
-    this.selectedCategoryId = category.idType;
-    this.isEditMode = true;
-    this.errorMessage = '';
-    this.successMessage = '';
-
-    this.categoryForm.patchValue({
-      nameType: category.nameType,
-      description: category.description ?? ''
-    });
+    this.openModal(category);
   }
 
   onDelete(id: number): void {
@@ -158,7 +197,8 @@ export class AdminCategoryPageComponent implements OnInit {
   resetForm(): void {
     this.categoryForm.reset({
       nameType: '',
-      description: ''
+      description: '',
+      departmentId: null
     });
     this.selectedCategoryId = null;
     this.isEditMode = false;
@@ -171,6 +211,12 @@ export class AdminCategoryPageComponent implements OnInit {
   get description() {
     return this.categoryForm.get('description');
   }
+
+  get departmentId() {
+    return this.categoryForm.get('departmentId');
+  }
+
+  // Extracted Error
 
   private extractError(err: unknown, fallback: string): string {
     const error = err as { error?: { message?: string } | string };

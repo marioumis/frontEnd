@@ -3,17 +3,23 @@
   height: 100vh;
 }
 
+/* ── DARK SIDEBAR ── */
 .sidebar {
-  width: 260px;
+  width: 250px; 
   height: 100%;
-  background: var(--white);
-  border-right: 1px solid var(--border);
+  border-right: 1px solid rgba(255, 255, 255, 0.05);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   padding: 24px 20px;
   box-sizing: border-box;
-  box-shadow: var(--shadow-sm);
+  position: relative;
+  z-index: 10;
+  
+  /* Integrated Dark Theme using native palette */
+  background-color: var(--blue-900);
+  background-image: linear-gradient(170deg, var(--blue-800) 0%, var(--blue-900) 100%);
+  color: var(--white);
 }
 
 .sidebar-top {
@@ -27,50 +33,44 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 8px;
 }
 
 .logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .logo-mark {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-  background: linear-gradient(135deg, var(--blue-700), var(--blue-500));
-  color: var(--white);
+  width: 34px;
+  height: 34px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 700;
-  font-size: 14px;
-  box-shadow: 0 4px 10px rgba(37, 99, 235, 0.25);
+  flex-shrink: 0;
 }
 
 .logo-text {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--gray-900);
-  letter-spacing: -0.2px;
+  font-family: var(--font-display, 'Outfit', sans-serif);
+  font-size: 20px;
+  font-weight: 800;
+  color: #FFFFFF;
+  letter-spacing: -0.5px;
 }
 
 .utility-icons {
   display: flex;
   align-items: center;
-  gap: 8px;
 }
 
 .icon-btn {
-  background: none;
-  border: none;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 6px;
-  color: var(--gray-400);
+  color: var(--blue-200);
   cursor: pointer;
-  border-radius: var(--radius-sm);
-  transition: var(--transition);
+  border-radius: 8px;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -78,158 +78,216 @@
 }
 
 .icon-btn svg {
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 18px;
 }
 
 .icon-btn:hover {
-  background: var(--gray-100);
-  color: var(--blue-600);
+  background: rgba(255, 255, 255, 0.15);
+  color: var(--white);
 }
 
 .status-dot {
   position: absolute;
   top: 4px;
   right: 4px;
-  width: 8px;
-  height: 8px;
-  background: #22c55e;
-  border: 2px solid var(--white);
+  width: 6px;
+  height: 6px;
+  background: #34D399;
+  border: 1.5px solid var(--blue-900);
   border-radius: 50%;
+  box-shadow: 0 0 8px #34D399;
 }
 
-/* ── Centered User Profile ── */
-.user-profile-centered {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  padding: 16px 0;
-}
-
-.avatar-large {
-  width: 88px;
-  height: 88px;
-  border-radius: 24px; /* Slightly squared rounded corners like in the image */
-  background: linear-gradient(135deg, var(--blue-600), var(--blue-400));
-  color: var(--white);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-  font-size: 28px;
-  margin-bottom: 16px;
-  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.15);
-  overflow: hidden;
-  border: 4px solid var(--white);
-}
-
-.avatar-large img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.user-meta {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.user-display-name {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--gray-900);
-  margin: 0;
-}
-
-.user-display-email {
-  font-size: 13px;
-  color: var(--gray-500);
-  margin: 0;
-}
 
 /* ── Nav ── */
 .nav {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
+}
+
+.nav-group-title {
+  font-family: var(--font, 'Inter', sans-serif);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--blue-300);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  margin-top: 14px;
+  padding-left: 12px;
 }
 
 .nav-link {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  border-radius: var(--radius-md);
-  color: var(--gray-600);
-  font-size: 14px;
+  gap: 14px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  color: var(--blue-100);
+  font-size: 14px; 
   font-weight: 500;
-  transition: var(--transition);
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
   text-decoration: none;
+  background: transparent;
+  border: 1px solid transparent;
 }
 
 .nav-icon-wrapper {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--gray-400);
-  transition: var(--transition);
-}
-
-.nav-icon-wrapper svg {
-  width: 100%;
-  height: 100%;
+  color: var(--blue-200);
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  border-radius: 6px;
 }
 
 .nav-link:hover {
-  background: var(--blue-50);
-  color: var(--blue-700);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--white);
+  transform: translateX(4px);
 }
 
 .nav-link:hover .nav-icon-wrapper {
-  color: var(--blue-600);
-  transform: scale(1.1);
+  color: var(--white);
 }
 
+/* Glassmorphic Active State */
 .nav-link.active {
-  background: var(--blue-600);
+  background: rgba(255, 255, 255, 0.1); 
   color: var(--white);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+  border-color: rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .nav-link.active .nav-icon-wrapper {
   color: var(--white);
+  background: var(--blue-600); /* Matches native brand blue */
+  padding: 4px;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.4);
 }
 
-/* ── Logout ── */
-.logout-btn {
+/* ── Bottom Section (User Profile) ── */
+.sidebar-bottom {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.08), transparent);
+  margin-bottom: 20px;
+}
+
+.user-bottom-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  background: transparent;
+}
+
+.user-bottom-profile:hover {
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateY(-2px);
+}
+
+.user-avatar-small {
+  position: relative;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  padding: 2px;
+  background: linear-gradient(135deg, var(--blue-400), var(--blue-600));
+  flex-shrink: 0;
+}
+
+.avatar-gradient {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--blue-800);
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px;
-  border: 1px solid var(--border);
-  background: var(--white);
-  color: var(--error-text);
-  border-radius: var(--radius-md);
+  color: var(--blue-100);
+  font-weight: 700;
   font-size: 14px;
+}
+
+.user-status-indicator {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 10px;
+  height: 10px;
+  background: #34D399; 
+  border: 2px solid var(--blue-900);
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(52, 211, 153, 0.4);
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
+.user-name {
   font-weight: 600;
+  font-size: 14px;
+  color: var(--white);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-role {
+  font-size: 12px;
+  color: var(--blue-200);
+  font-weight: 500;
+}
+
+.user-logout-btn {
+  background: rgba(239, 68, 68, 0.05);
+  border: 1px solid transparent;
+  color: #94A3B8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: var(--transition);
+  transition: all 0.2s cubic-bezier(0.2, 0.8, 0.2, 1);
+  flex-shrink: 0;
 }
 
-.logout-btn:hover {
-  background: var(--error-bg);
-  border-color: var(--error-border);
-  transform: translateY(-1px);
+.user-logout-btn svg {
+  width: 16px;
+  height: 16px;
 }
 
-/* ── Responsive ── */
-@media (max-width: 768px) {
-  .sidebar {
-    width: 220px;
-    padding: 16px 14px;
-  }
+.user-logout-btn:hover {
+  background: rgba(239, 68, 68, 0.15);
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #EF4444; /* Red logout color */
+  transform: translateX(2px);
+}
+
+.user-bottom-profile {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: transparent;
 }

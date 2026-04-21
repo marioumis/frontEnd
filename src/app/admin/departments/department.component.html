@@ -9,64 +9,36 @@
         Create, update, and organize departments.
       </div>
     </div>
+    
+    <div class="topbar-right">
+      <div class="search-wrap">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <circle cx="7" cy="7" r="4.75" stroke="currentColor" stroke-width="1.4" />
+          <path d="M10.5 10.5L14 14" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" />
+        </svg>
+        <input
+          [(ngModel)]="searchTerm"
+          (input)="applyFilters()"
+          type="text"
+          placeholder="Search departments" />
+      </div>
+
+      <button class="btn-primary" type="button" (click)="openModal()">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M8 3v10M3 8h10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+        </svg>
+        New Department
+      </button>
+    </div>
   </div>
 
-  <!-- FORM -->
-  <form [formGroup]="departmentForm" (ngSubmit)="onSubmit()" class="form">
+  <div class="error-box" *ngIf="errorMessage" style="margin-bottom: 20px;">
+    {{ errorMessage }}
+  </div>
 
-    <div class="field">
-      <label>Department name</label>
-      <input
-        type="text"
-        formControlName="nomDep"
-        placeholder="Enter department name"
-      />
-
-      <div class="error" *ngIf="nomDep?.touched && nomDep?.errors?.['required']">
-        Department name is required
-      </div>
-
-      <div class="error" *ngIf="nomDep?.errors?.['maxlength']">
-        Max 50 characters
-      </div>
-    </div>
-
-    <div class="field">
-      <label>Description</label>
-      <textarea
-        formControlName="description"
-        placeholder="Enter description"
-      ></textarea>
-
-      <div class="error" *ngIf="description?.errors?.['maxlength']">
-        Max 255 characters
-      </div>
-    </div>
-
-    <div class="actions-row">
-      <button class="btn" type="submit">
-        {{ isEditMode ? 'Update' : 'Create' }}
-      </button>
-
-      <button
-        class="btn secondary"
-        type="button"
-        *ngIf="isEditMode"
-        (click)="resetForm()"
-      >
-        Cancel
-      </button>
-    </div>
-
-    <div class="error-box" *ngIf="errorMessage">
-      {{ errorMessage }}
-    </div>
-
-    <div class="success-box" *ngIf="successMessage">
-      {{ successMessage }}
-    </div>
-
-  </form>
+  <div class="success-box" *ngIf="successMessage" style="margin-bottom: 20px;">
+    {{ successMessage }}
+  </div>
 
   <!-- TABLE -->
   <div class="table-wrap">
@@ -76,65 +48,129 @@
       <span>Loading departments...</span>
     </div>
 
-    <table class="table" *ngIf="!loading && departments.length > 0">
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Manager / Admin</th>
-          <th>Description</th>
-          <th class="th-actions">Actions</th>
-        </tr>
-      </thead>
+    @if (!loading) {
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Department</th>
+            <th>Manager / Admin</th>
+            <th>Description</th>
+            <th class="th-actions">Actions</th>
+          </tr>
+        </thead>
 
-      <tbody>
-        <tr *ngFor="let department of departments">
-          <td>{{ department.idDep }}</td>
-          <td>{{ department.nomDep }}</td>
-          <td>
-            <span class="admin-chip">
-              {{ department.deptAdminName }}
-            </span>
-          </td>
-          <td>{{ department.description || '—' }}</td>
+        <tbody>
+          @for (department of filteredDepartments; track department.idDep) {
+            <tr>
+              <td>
+                <div class="user-cell">
+                  <div class="avatar">
+                    {{ department.nomDep.slice(0, 1).toUpperCase() }}
+                  </div>
+                  <div>
+                    <div class="user-name">{{ department.nomDep }}</div>
+                    <div class="subtle-text">ID {{ department.idDep }}</div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="badge badge-role">
+                  {{ department.deptAdminName || 'Unassigned' }}
+                </span>
+              </td>
+              <td>{{ department.description || '—' }}</td>
 
-          <td>
-            <div class="actions">
+              <td>
+                <div class="actions">
 
-              <button
-                class="act-btn act-edit"
-                (click)="onEdit(department)"
-                title="Edit"
-              >
-                <svg viewBox="0 0 16 16" fill="none">
-                  <path d="M11 2l3 3-8 8H3v-3l8-8z"
-                    stroke="currentColor"
-                    stroke-width="1.2"/>
-                </svg>
-              </button>
+                  <button
+                    class="act-btn act-edit"
+                    (click)="onEdit(department)"
+                    title="Edit"
+                  >
+                    <svg viewBox="0 0 16 16" fill="none">
+                      <path d="M11 2l3 3-8 8H3v-3l8-8z"
+                        stroke="currentColor"
+                        stroke-width="1.2"/>
+                    </svg>
+                  </button>
 
-              <button
-                class="act-btn act-del"
-                (click)="onDelete(department.idDep)"
-                title="Delete"
-              >
-                <svg viewBox="0 0 16 16" fill="none">
-                  <path d="M3 4h10M6 4V2h4v2M5 4l1 9h4l1-9"
-                    stroke="currentColor"
-                    stroke-width="1.2"/>
-                </svg>
-              </button>
+                  <button
+                    class="act-btn act-del"
+                    (click)="onDelete(department.idDep)"
+                    title="Delete"
+                  >
+                    <svg viewBox="0 0 16 16" fill="none">
+                      <path d="M3 4h10M6 4V2h4v2M5 4l1 9h4l1-9"
+                        stroke="currentColor"
+                        stroke-width="1.2"/>
+                    </svg>
+                  </button>
 
-            </div>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-
-    <div *ngIf="!loading && departments.length === 0" class="empty">
-      No departments found
-    </div>
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="4" class="empty">No departments found</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
 
   </div>
 
 </div>
+
+<!-- DEPARTMENT MODAL -->
+@if (showModal) {
+  <div class="modal-overlay" (click)="closeModal()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ isEditMode ? 'Edit Department' : 'Create Department' }}</h2>
+        <button class="modal-close" type="button" (click)="closeModal()">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">
+          Add a new organizational department and optionally appoint an admin.
+        </p>
+
+        <form [formGroup]="departmentForm" class="category-form">
+          <div class="form-group">
+            <label>Department Name</label>
+            <input type="text" formControlName="nomDep" placeholder="Human Resources" [class.input-error]="nomDep?.invalid && nomDep?.touched" />
+            @if (nomDep?.touched && nomDep?.errors?.['required']) {
+              <div class="error-text">Department name is required.</div>
+            }
+          </div>
+
+          <div class="form-group mt-2">
+            <label>Description</label>
+            <textarea formControlName="description" rows="3" placeholder="Brief description..."></textarea>
+          </div>
+
+          <div class="form-group mt-2">
+            <label>Assign Department Admin (Optional)</label>
+            <select formControlName="deptAdminId" class="modal-select">
+              <option [ngValue]="null">-- Leave Unassigned --</option>
+              @for (user of users; track user.id) {
+                <option [ngValue]="user.id">{{ user.firstName }} {{ user.lastName }} ({{ user.email }})</option>
+              }
+            </select>
+            @if (loadingUsers) {
+              <small style="color: #8892b0; margin-top: 4px; display: block;">Loading users...</small>
+            }
+          </div>
+        </form>
+
+      </div>
+      <div class="modal-footer">
+        <button class="btn-cancel" type="button" (click)="closeModal()">Cancel</button>
+        <button class="btn-send" type="button" (click)="onSubmit()" [disabled]="saving || departmentForm.invalid">
+          {{ saving ? 'Saving...' : (isEditMode ? 'Update' : 'Create') }}
+        </button>
+      </div>
+    </div>
+  </div>
+}
